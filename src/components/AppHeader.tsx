@@ -27,10 +27,10 @@ export function AppHeader({ activeTab, onTabChange, selectedItemsCount }: AppHea
                   variant="ghost"
                   size="icon"
                   onClick={() => setMobileNavOpen(true)}
-                  className="flex-shrink-0 h-9 w-9 lg:h-10 lg:w-10 rounded-lg hover:bg-muted lg:hidden"
+                  className="flex-shrink-0 h-11 w-11 min-h-[44px] min-w-[44px] rounded-lg hover:bg-muted lg:hidden touch-manipulation"
                   aria-label="Open navigation menu"
                 >
-                  <List size={22} weight="bold" />
+                  <List size={24} weight="bold" />
                 </Button>
               )}
               
