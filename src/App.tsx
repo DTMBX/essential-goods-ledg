@@ -13,6 +13,7 @@ import { GenerationalDashboardView } from '@/components/GenerationalDashboardVie
 import { VolatilityExplorerView } from '@/components/VolatilityExplorerView'
 import { LearningModuleView } from '@/components/LearningModuleView'
 import { IconShowcase } from '@/components/IconShowcase'
+import { LoadingShowcase } from '@/components/LoadingStates'
 import type { UserWageConfig } from '@/lib/types'
 
 function App() {
@@ -32,6 +33,8 @@ function App() {
       setActiveTab('learn')
     } else if (hash === 'icons') {
       setActiveTab('icons')
+    } else if (hash === 'loading') {
+      setActiveTab('loading')
     }
   }, [])
   
@@ -135,6 +138,10 @@ function App() {
 
         {activeTab === 'icons' && (
           <IconShowcase />
+        )}
+
+        {activeTab === 'loading' && (
+          <LoadingShowcase />
         )}
       </main>
 
