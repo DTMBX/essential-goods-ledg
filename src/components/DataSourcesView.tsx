@@ -23,6 +23,7 @@ import {
 } from '@/lib/data-refresh'
 import { useAutoRefresh } from '@/hooks/use-auto-refresh'
 import { RefreshScheduleSettings } from '@/components/RefreshScheduleSettings'
+import { APIConnectionStatus } from '@/components/APIConnectionStatus'
 import { toast } from 'sonner'
 
 export function DataSourcesView() {
@@ -123,6 +124,8 @@ export function DataSourcesView() {
               </AlertDescription>
             </Alert>
           )}
+
+          <APIConnectionStatus />
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {SOURCES.map(source => {

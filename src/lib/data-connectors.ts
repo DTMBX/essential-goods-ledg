@@ -11,6 +11,7 @@ import type {
   ConfidenceScore,
 } from './types'
 import { EXPANDED_ITEMS, EXPANDED_SOURCES, convertUnit } from './expanded-catalog'
+import { blsClient, eiaClient, usdaClient } from './api-clients'
 
 export const DATA_CONNECTORS: DataConnector[] = [
   {
@@ -173,15 +174,149 @@ export async function fetchSeries(
   }
 
   try {
-    const rawPoints = await simulateFetch(connector, request)
+    const rawPoints = await fetchRealData(connector, request)
     response.rawPoints = rawPoints
     response.metadata.recordCount = rawPoints.length
     response.metadata.coverage = calculateCoverage(rawPoints, request.dateRange)
+    
+    if (rawPoints.length === 0) {
+      response.metadata.warnings.push('No data returned from API - falling back to simulated data')
+      const simulatedPoints = await simulateFetch(connector, request)
+      response.rawPoints = simulatedPoints
+      response.metadata.recordCount = simulatedPoints.length
+      response.metadata.coverage = calculateCoverage(simulatedPoints, request.dateRange)
+    }
   } catch (error) {
-    response.metadata.errors.push(error instanceof Error ? error.message : 'Unknown error')
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    response.metadata.errors.push(errorMessage)
+    response.metadata.warnings.push('Falling back to simulated data due to API error')
+    
+    try {
+      const simulatedPoints = await simulateFetch(connector, request)
+      response.rawPoints = simulatedPoints
+      response.metadata.recordCount = simulatedPoints.length
+      response.metadata.coverage = calculateCoverage(simulatedPoints, request.dateRange)
+    } catch (fallbackError) {
+      response.metadata.errors.push('Fallback to simulated data also failed')
+    }
   }
 
   return response
+}
+
+async function fetchRealData(
+  connector: DataConnector,
+  request: FetchSeriesRequest
+): Promise<RawPricePoint[]> {
+  const item = EXPANDED_ITEMS.find(i => i.id === request.itemId)
+  if (!item) {
+    throw new Error(`Item ${request.itemId} not found`)
+  }
+
+  if (!item.sourceSeriesIds.includes(connector.sourceId)) {
+    throw new Error(`Source ${connector.sourceId} does not provide data for item ${request.itemId}`)
+  }
+
+  const startYear = new Date(request.dateRange.start).getFullYear().toString()
+  const endYear = new Date(request.dateRange.end).getFullYear().toString()
+
+  switch (connector.sourceId) {
+    case 'bls-cpi':
+      return blsClient.fetchSeries({
+        seriesId: getBLSSeriesId(request.itemId, request.region),
+        startYear,
+        endYear,
+        region: request.region,
+      })
+
+    case 'bls-wage':
+      return blsClient.fetchSeries({
+        seriesId: getBLSWageSeriesId(request.region),
+        startYear,
+        endYear,
+        region: request.region,
+      })
+
+    case 'eia-petroleum':
+      return eiaClient.fetchSeries({
+        seriesId: getEIAPetroleumSeriesId(request.itemId),
+        startDate: request.dateRange.start,
+        endDate: request.dateRange.end,
+      })
+
+    case 'eia-natural-gas':
+      return eiaClient.fetchSeries({
+        seriesId: getEIANaturalGasSeriesId(request.itemId),
+        startDate: request.dateRange.start,
+        endDate: request.dateRange.end,
+      })
+
+    case 'eia-electricity':
+      return eiaClient.fetchSeries({
+        seriesId: getEIAElectricitySeriesId(request.itemId),
+        startDate: request.dateRange.start,
+        endDate: request.dateRange.end,
+      })
+
+    case 'usda-nass':
+      return usdaClient.fetchQuickStats({
+        commodity: getUSDAcommodity(request.itemId),
+        dataItem: 'PRICE RECEIVED',
+        domain: 'TOTAL',
+        beginDate: request.dateRange.start,
+        endDate: request.dateRange.end,
+      })
+
+    default:
+      throw new Error(`Unsupported connector: ${connector.sourceId}`)
+  }
+}
+
+function getBLSSeriesId(itemId: string, region: string): string {
+  const cpiSeriesMap: Record<string, string> = {
+    'cpi-all-items': 'CUUR0000SA0',
+    'cpi-food': 'CUUR0000SAF',
+    'cpi-energy': 'CUUR0000SA0E',
+  }
+  return cpiSeriesMap[itemId] || 'CUUR0000SA0'
+}
+
+function getBLSWageSeriesId(region: string): string {
+  return 'CES0000000003'
+}
+
+function getEIAPetroleumSeriesId(itemId: string): string {
+  const seriesMap: Record<string, string> = {
+    'gasoline-gallon': 'PET.EMM_EPM0_PTE_NUS_DPG.M',
+    'diesel-gallon': 'PET.EMD_EPD2D_PTE_NUS_DPG.M',
+    'heating-oil-gallon': 'PET.EMM_EPMRR_PTE_NUS_DPG.M',
+    'propane-gallon': 'PET.EER_EPPLLPA_PF4_Y35NY_DPG.M',
+  }
+  return seriesMap[itemId] || 'PET.EMM_EPM0_PTE_NUS_DPG.M'
+}
+
+function getEIANaturalGasSeriesId(itemId: string): string {
+  return 'NG.N3020US3.M'
+}
+
+function getEIAElectricitySeriesId(itemId: string): string {
+  return 'ELEC.PRICE.US-ALL.M'
+}
+
+function getUSDAcommodity(itemId: string): string {
+  const commodityMap: Record<string, string> = {
+    'milk-gallon': 'MILK',
+    'eggs-dozen': 'EGGS',
+    'butter-lb': 'BUTTER',
+    'cheese-lb': 'CHEESE',
+    'ground-beef-lb': 'CATTLE',
+    'pork-chops-lb': 'HOGS',
+    'chicken-breast-lb': 'BROILERS',
+    'apples-lb': 'APPLES',
+    'potatoes-lb': 'POTATOES',
+    'tomatoes-lb': 'TOMATOES',
+  }
+  return commodityMap[itemId] || 'MILK'
 }
 
 async function simulateFetch(

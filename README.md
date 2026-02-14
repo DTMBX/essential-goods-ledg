@@ -142,9 +142,34 @@ Chronos is built on principles of:
 
 ---
 
-## 📊 Data Sources (v1.0 Expanded)
+## 📊 Data Sources (v1.0 - Live API Integration)
 
-### Official Government Sources (8 Connectors)
+### Official Government API Connections
+
+Chronos now integrates directly with live government data APIs:
+
+#### Bureau of Labor Statistics (BLS)
+- **API**: https://api.bls.gov/publicAPI/v2
+- **Data**: CPI (Consumer Price Index), wage statistics
+- **Coverage**: 1913-present (CPI), 1964-present (wages)
+- **Rate Limit**: 25 requests/min, 500/hour
+- **Status**: ✅ Live integration with fallback
+
+#### Energy Information Administration (EIA)
+- **API**: https://api.eia.gov/v2
+- **Data**: Petroleum, natural gas, electricity prices
+- **Coverage**: 1967-present (varies by series)
+- **Rate Limit**: 100 requests/min, 5,000/hour
+- **Status**: ✅ Live integration with fallback
+
+#### USDA National Agricultural Statistics Service (NASS)
+- **API**: https://quickstats.nass.usda.gov/api
+- **Data**: Agricultural commodity prices (dairy, meat, produce)
+- **Coverage**: 1866-present (varies by commodity)
+- **Rate Limit**: 60 requests/min, 1,000/hour
+- **Status**: ✅ Live integration with fallback
+
+### Official Government Sources (8 Connectors Total)
 - **USDA-AMS** - Agricultural Marketing Service (dairy, proteins)
 - **USDA-NASS** - National Agricultural Statistics (produce, meat, inputs)
 - **EIA-Petroleum** - Energy Information Administration (gasoline, diesel, propane, heating oil)
@@ -159,8 +184,17 @@ Chronos is built on principles of:
 - **Tier-1 Reliability** (all official government sources)
 - **Multiple Regions** (US-National, Midwest, Northeast, South, West where applicable)
 
+### Fallback Strategy
+
+When live APIs are unavailable, the system gracefully falls back:
+
+1. **Primary**: Fetch from real government API
+2. **Fallback**: Deterministic simulated data based on historical patterns
+3. **Transparency**: Clear badges indicate data source (Live vs Simulated)
+
 All sources displayed with:
 - Provider name and official status badge
+- API connection status (Live, Degraded, Error)
 - License and usage terms
 - Series identifiers
 - Coverage map (regions × items)
@@ -169,6 +203,17 @@ All sources displayed with:
 - Last successful fetch timestamp
 - Rate limits and circuit breaker configuration
 - Direct links to official documentation
+
+### API Integration Documentation
+
+See [API Integration Guide](./API_INTEGRATION_GUIDE.md) for:
+- Complete API endpoint documentation
+- Rate limiting strategies
+- Retry and timeout configuration
+- Series ID mappings
+- Data validation pipeline
+- Error handling patterns
+- Testing strategies
 
 [View Source Registry →](/#registry)
 
