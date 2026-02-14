@@ -40,6 +40,15 @@ Chronos is a cross-platform evidence-visualization tool that tracks everyday nec
 - **Source Tracking** - Last refresh timestamps and connection monitoring
 - **Graceful Degradation** - Cached data available during source failures
 - **Circuit Breakers** - Auto-disable connectors after failure threshold
+- **Data Quality Monitoring** - Real-time API health dashboard with alerting (New!)
+
+### 🔍 Real-Time Monitoring (New!)
+- **API Health Dashboard** - Live status of all 8 data connectors
+- **Automated Alerting** - Critical/warning/info alerts for API failures and degraded performance
+- **Quality Scorecards** - Composite scores (0-100) for availability, freshness, accuracy
+- **Call History Logs** - Complete audit trail of API interactions with timestamps
+- **Circuit Breaker Visualization** - Real-time status of protective failure mechanisms
+- **Performance Metrics** - Response times, success rates, error counts, rate limit tracking
 
 ### 📤 Sharing & Export
 - **Shareable Permalinks** - Reproducible configurations with tamper-evident hashing
@@ -91,6 +100,7 @@ The app runs automatically in your Spark environment. Simply navigate between vi
 - **Methodology** - Formulas and data sources
 - **Sources** - API refresh management
 - **Source Registry** (NEW) - Complete data provenance and quality view
+- **Data Quality** (NEW) - Real-time API monitoring dashboard with alerting
 - **Settings** - Wage configuration
 
 ### Key Documentation
@@ -99,6 +109,7 @@ The app runs automatically in your Spark environment. Simply navigate between vi
 - [Product Requirements](./PRD.md) - Complete feature specifications (updated for v1.0)
 - [Expanded Catalog Implementation](./EXPANDED_CATALOG_IMPLEMENTATION.md) - Architecture and acceptance criteria (NEW)
 - [Developer Guide](./DEVELOPER_GUIDE.md) - How to add items, sources, and connectors (NEW)
+- [Data Quality Monitoring](./DATA_QUALITY_MONITORING.md) - Real-time API health dashboard documentation (NEW)
 - [Files Modified](./FILES_MODIFIED.md) - Change log for Iteration 15 (NEW)
 
 #### Design & Brand

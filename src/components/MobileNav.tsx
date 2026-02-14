@@ -15,7 +15,8 @@ import {
   EducationIcon,
   MethodologyIcon,
   DataSourceIcon,
-  SettingsIcon
+  SettingsIcon,
+  MonitoringIcon
 } from '@/components/icons'
 
 interface MobileNavProps {
@@ -38,6 +39,7 @@ const navItems = [
   { id: 'methodology', label: 'Methodology', icon: MethodologyIcon, description: 'Formulas & sources' },
   { id: 'sources', label: 'Sources', icon: DataSourceIcon, description: 'API data refresh' },
   { id: 'registry', label: 'Source Registry', icon: DataSourceIcon, description: 'Data provenance & quality', highlight: true },
+  { id: 'monitoring', label: 'Data Quality', icon: MonitoringIcon, description: 'Real-time API monitoring', highlight: true },
   { id: 'settings', label: 'Settings', icon: SettingsIcon, description: 'Configure wage' },
 ]
 

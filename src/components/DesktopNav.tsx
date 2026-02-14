@@ -10,7 +10,8 @@ import {
   EducationIcon,
   MethodologyIcon,
   DataSourceIcon,
-  SettingsIcon
+  SettingsIcon,
+  MonitoringIcon
 } from '@/components/icons'
 
 interface DesktopNavProps {
@@ -31,6 +32,7 @@ const navItems = [
   { id: 'methodology', label: 'Methodology', icon: MethodologyIcon },
   { id: 'sources', label: 'Sources', icon: DataSourceIcon },
   { id: 'registry', label: 'Source Registry', icon: DataSourceIcon, highlight: true },
+  { id: 'monitoring', label: 'Data Quality', icon: MonitoringIcon, highlight: true },
   { id: 'settings', label: 'Settings', icon: SettingsIcon },
 ]
 

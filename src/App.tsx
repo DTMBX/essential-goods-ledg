@@ -17,6 +17,7 @@ import { LearningModuleView } from '@/components/LearningModuleView'
 import { IconShowcase } from '@/components/IconShowcase'
 import { LoadingShowcase } from '@/components/LoadingStates'
 import { BrandShowcase } from '@/components/BrandShowcase'
+import { DataQualityMonitoringView } from '@/components/DataQualityMonitoringView'
 import type { UserWageConfig } from '@/lib/types'
 
 function App() {
@@ -44,6 +45,8 @@ function App() {
       setActiveTab('loading')
     } else if (hash === 'brand') {
       setActiveTab('brand')
+    } else if (hash === 'monitoring') {
+      setActiveTab('monitoring')
     }
   }, [])
   
@@ -167,6 +170,10 @@ function App() {
 
         {activeTab === 'brand' && (
           <BrandShowcase />
+        )}
+
+        {activeTab === 'monitoring' && (
+          <DataQualityMonitoringView />
         )}
       </main>
 

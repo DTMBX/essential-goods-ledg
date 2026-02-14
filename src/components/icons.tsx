@@ -250,6 +250,19 @@ export function VerifiedIcon({ size = 24, className = "", weight = 'regular' }: 
   )
 }
 
+export function MonitoringIcon({ size = 24, className = "", weight = 'regular' }: IconProps) {
+  const sw = strokeWidths[weight]
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <rect x="2" y="3" width="20" height="14" rx="2" stroke="currentColor" strokeWidth={sw} />
+      <path d="M8 21h8M12 17v4" stroke="currentColor" strokeWidth={sw} strokeLinecap="round" />
+      <path d="M6 8h12M6 11h8M6 14h6" stroke="currentColor" strokeWidth={sw} strokeLinecap="round" opacity="0.6" />
+      <circle cx="18" cy="8" r="1.5" fill="currentColor" />
+      <path d="M7 8l3 3 3-3" stroke="currentColor" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" opacity="0.4" />
+    </svg>
+  )
+}
+
 export function FilterIcon({ size = 24, className = "", weight = 'regular' }: IconProps) {
   const sw = strokeWidths[weight]
   return (
