@@ -14,6 +14,10 @@ This is a sophisticated generational economics platform with long-run time-serie
 
 ## Essential Features
 
+### Product Expansion Goal
+- **Objective**: Extend the essentials catalog significantly (to 40+ items) and harden the data pipeline so price history is accurate, auditable, secure, and resilient to bad data and API outages, while keeping the UI simple for everyday users and powerful for analysts
+- **Scope**: Expanded taxonomy covering food staples, proteins, produce, household items, utilities/energy, housing proxies, health basics, and agricultural inputs with full unit standardization, validation pipelines, confidence scoring, provenance tracking, and operational resilience features
+
 ### Home Dashboard - Basket Snapshot
 - **Functionality**: Displays a curated basket of essential goods (eggs, milk, butter, cheese, ground beef, tenderloin, gasoline, propane) with current prices and affordability metrics
 - **Purpose**: Provides an immediate, visceral understanding of purchasing power through the "hours of work" headline metric
@@ -93,11 +97,123 @@ This is a sophisticated generational economics platform with long-run time-serie
 - **Progression**: Browse by category → Search with synonyms → View item details (unit standards, alt units, coverage) → Mark favorites → Add to comparison basket → Select basket templates (Family of 4, Single Adult, Tradesperson)
 - **Success criteria**: 40+ items across categories; each item defines standard unit, acceptable alternates, and conversion factors; coverage and confidence shown per item/region; synonym search works (e.g., "hamburger" finds "ground beef"); basket templates populate comparison view; favorites persist across sessions
 
-#### Expanded Catalog Categories & Items:
-- **Dairy**: eggs, milk, butter, cheese
-- **Meat**: ground beef, beef steak, pork chops, bacon
-- **Proteins**: chicken breast, whole chicken, canned tuna, dried beans
+#### Expanded Catalog Categories & Items (MUST Include):
+- **Food Staples**: eggs, milk, butter, cheese, bread, rice, pasta, flour, sugar, salt, coffee
+- **Proteins**: chicken breast, whole chicken, ground beef, beef steak/tenderloin, pork chops, bacon, canned tuna, beans
 - **Produce**: apples, bananas, potatoes, onions, tomatoes, lettuce
+- **Household**: toilet paper, paper towels, detergent, soap, diapers
+- **Utilities/Energy**: gasoline, diesel, propane, heating oil, electricity, natural gas
+- **Housing Proxies**: rent index (if available)
+- **Health Basics**: OTC pain reliever index (if available)
+- **Agricultural Inputs**: seeds, potting soil, fertilizer, animal feed (where data exists)
+
+#### Catalog Structure Requirements (MUST):
+- **Unit Standard**: Every item MUST define a standard unit ($/dozen, $/gallon, $/kWh, $/lb)
+- **Alternate Units**: List acceptable alternate units with explicit conversion rules
+- **Source Mapping**: Each item MUST map to one or more source series identifiers with region coverage metadata
+- **Synonym Support**: Enable searching by common names and regional variations
+
+### Data Connector Architecture
+- **Functionality**: Implement "connector modules" per source (USDA-AMS, USDA-NASS, EIA-Petroleum, EIA-Natural-Gas, EIA-Electricity, BLS-Wage, BLS-CPI, FRED-Housing) with common interface: `fetch_series(region, item, date_range) → raw_points + metadata`
+- **Purpose**: Build resilient, independently manageable data ingestion that degrades gracefully during API outages while maintaining security and rate limit compliance
+- **Trigger**: Background scheduled fetch jobs or user-initiated manual refresh
+- **Progression**: Check connector enabled & feature-flagged → Respect rate limits → Fetch with retries/backoff → Store raw immutable → Return metadata with errors/warnings
+- **Success criteria**: Each connector MUST be feature-flagged and independently disable-able; MUST support configurable retries/backoff (default: 3 retries, exponential backoff); MUST implement circuit breakers (default: trip after 5 consecutive failures); MUST enforce rate limits per connector (requests/minute and requests/hour caps); MUST maintain domain allowlists for outbound fetches; MUST log health status with last successful fetch timestamps
+
+#### Production Connectors (8 Required):
+1. **USDA-AMS**: Dairy & protein reports
+2. **USDA-NASS**: Agricultural commodity prices  
+3. **EIA-Petroleum**: Gasoline, diesel, heating oil, propane
+4. **EIA-Natural Gas**: Residential natural gas prices
+5. **EIA-Electricity**: Residential electricity rates
+6. **BLS-Wage**: Minimum and median wage data
+7. **BLS-CPI**: Consumer Price Index
+8. **FRED-Housing**: Rent indices
+
+### Normalization Pipeline
+- **Functionality**: Multi-stage processing that stores raw data immutably, then creates normalized series through: (1) unit normalization, (2) frequency normalization (daily/weekly/monthly), (3) currency normalization (if multi-currency later), (4) QA flagging
+- **Purpose**: Preserve auditability by maintaining raw and normalized data side-by-side while surfacing quality issues transparently
+- **Trigger**: Automatically after each connector fetch; results viewable in Source Registry
+- **Progression**: Raw data stored with checksums → Schema validation → Unit conversion using explicit factors → Frequency alignment with selectable aggregation (end-of-period, mean, median) → QA checks write flags → Confidence score computed → Both raw and normalized persisted
+- **Success criteria**: MUST preserve raw and normalized side-by-side for auditability; MUST support deterministic aggregation options (end-of-period, mean, median) selectable per dataset and exposed in Methodology; wage series and price series MUST align to common timeline (default monthly) for comparisons; gaps MUST be explicitly surfaced
+
+### Accuracy & Validation Checks (MUST Include All):
+- **Schema Validation**: Check required fields (id, itemId, date, value, unit, sourceId, region)
+- **Unit Validation**: Verify units match item standards or acceptable alternates
+- **Impossible Value Checks**: Flag negative prices, zero values where inappropriate
+- **Outlier Detection**: Compute robust z-score using MAD (Median Absolute Deviation); flag if z-score > 3.5
+- **Sudden Jump Flags**: Detect month-over-month changes >50% 
+- **Duplicate Removal**: Check for identical itemId+date+region combinations
+- **Missing Interval Detection**: Identify gaps in expected timeline frequency
+- **Revision Handling**: Track when providers backfill historical points
+
+**All validation checks MUST write QAFlag records to each point with type, severity (error/warning/info), message, and timestamp**
+
+### Revisions & Provenance
+- **Functionality**: If a provider revises historical points, system MUST version the dataset snapshot and maintain change log recording what changed, when, and source retrieval time
+- **Purpose**: Enable reproducible research and detect when historical data gets revised
+- **Trigger**: Automatic during fetch when checksums don't match previous values
+- **Progression**: Fetch new data → Compare checksums with stored → Detect changes → Create new version snapshot → Log revision details → Update UI indicators
+- **Success criteria**: UI MUST show 'last updated' and 'data revised' notices when relevant; change logs accessible from Source Registry; exports include dataset version IDs
+
+### Confidence Scoring
+- **Functionality**: Compute per-series confidence score (0-100) from: coverage × 0.3 + recency × 0.2 + outlier-free × 0.3 + provider tier × 0.2
+- **Purpose**: Help users identify high-quality data and filter out unreliable series
+- **Trigger**: Automatically after normalization; displayed in UI badges
+- **Progression**: Count valid points vs expected → Measure days since update → Calculate outlier rate → Look up provider tier → Compute weighted score → Assign level (High ≥80, Medium 50-79, Low <50)
+- **Success criteria**: UI MUST show confidence badge and allow filtering/hiding low-confidence series; factor breakdown (coverage %, recency days, outlier %, tier score) visible on hover; methodology documents scoring algorithm
+
+### Secure Ingestion (MUST Implement All):
+- **API Keys/Secrets**: MUST be stored server-side only (never shipped to clients)
+- **Signed Requests**: Use signed requests for internal ingestion endpoints
+- **Domain Allowlists**: Strict allowlists for outbound fetch domains per connector
+- **Rate Limiting**: Per-connector rate limits to prevent abuse (configured in connector definitions)
+- **Input Validation**: All user inputs sanitized, no raw string interpolation in queries
+- **Error Handling**: Provide actionable error codes without leaking internal details
+
+### Auth & RBAC (MUST Enforce):
+- **Anonymous**: Read-only access to public charts and dashboards
+- **Registered Users**: Can save baskets, comparisons, and favorites; set wage config
+- **Analyst Role**: Can edit methodology notes and annotations with citations
+- **Admin Role**: Can enable/disable connectors, edit item mappings, approve new items, access audit logs
+- **Enforcement**: Least privilege by default; log all privileged actions to audit trail
+
+### API Security (MUST Implement):
+- **Input Validation**: Strict schema validation on all endpoints
+- **Pagination Limits**: Max 1000 records per request
+- **Rate Limiting**: Per-IP and per-user rate limits on public endpoints
+- **CORS**: Locked down to allowed origins only
+- **Audit Logging**: Log all data access, modifications, and privileged operations
+- **Injection Protection**: Parameterized queries, no string concatenation
+- **SSRF Protection**: URL validation, domain allowlists for external fetches
+
+### Data Integrity (MUST Provide):
+- **Checksums/Hashes**: For raw ingestion payloads and normalized series exports
+- **Deterministic Calculations**: Given a dataset version, outputs are reproducible
+- **Export Metadata**: MUST include dataset version IDs, retrieval timestamps, formulas, source citations
+- **Tamper Evidence**: Optional signed export bundles with verification hashes
+
+### Privacy (MUST Comply):
+- **Minimal Data**: Collect only email (optional) for auth; no precise location
+- **Coarse Regions**: Store region at state/metro level only when selection needed
+- **Retention Controls**: Users can delete accounts and associated data
+- **Anonymous Use**: Full read-only access without authentication
+
+### Source Registry Screen (Fixed Requirement)
+- **Functionality**: Single source of truth listing every dataset used with provider name, series IDs, license/terms summary, refresh schedule, coverage map, connector status, health checks
+- **Purpose**: Establish complete transparency about data sources and licensing
+- **Trigger**: Navigate to "Source Registry" tab
+- **Progression**: View source list → See official badges, tier ratings → Inspect license terms → View coverage map (regions × items) → Check connector status (enabled, rate limits, last fetch, errors) → Click through to official documentation
+- **Success criteria**: MUST list every data source with provider, license summary, terms, and official status badge; MUST show reliability tier (tier-1 = government primary, tier-2 = reputable secondary, tier-3 = experimental); MUST display refresh schedule and last successful fetch timestamp; MUST show region-item coverage matrix; MUST indicate connector health (active, maintenance, deprecated); MUST link to official source documentation
+
+### Operational Resilience
+- **Scheduled Fetch Jobs**: Incremental updates on configurable schedules (hourly/daily per source)
+- **Cache Layer**: Common queries cached; serve from cache if connector temporarily down
+- **Graceful Degradation**: If connector down, serve last known good data with prominent warning and age indicator
+- **Health Checks**: Per-connector health monitoring with status indicators in UI
+- **Manual Refresh**: Users can trigger individual source or global refresh from Sources view
+- **Retry Logic**: Exponential backoff on failures; circuit breaker trips after threshold
+- **Status Dashboard**: Source Registry shows real-time health for each connector
 - **Grains**: rice, pasta
 - **Staples**: bread, flour, sugar, salt, coffee
 - **Household**: toilet paper, paper towels, laundry detergent, bar soap, diapers
@@ -228,6 +344,95 @@ This is a sophisticated generational economics platform with long-run time-serie
 - **Progression**: View chart → Read "Shows/Doesn't Show" panel → Understand limitations → Optional: view interpretive perspectives (labeled as opinion) → Make informed conclusions
 - **Success criteria**: MUST appear on every analytical view; "Shows" section lists only observable patterns; "Doesn't Show" explicitly states what cannot be concluded; interpretive commentary clearly labeled as perspective; users can toggle interpretive layer off; default view is fact-only
 
+## Acceptance Criteria
+
+### Catalog Expansion (MUST):
+- MUST add at least 40 essentials across food, household, and energy categories
+- MUST define unit standards ($/dozen, $/gallon, $/kWh, $/lb, etc.) for each item
+- MUST define conversion rules for acceptable alternate units (lb↔oz, lb↔kg, gallon↔liter, therm↔kWh)
+- MUST show coverage (which regions have data) per item
+- MUST show confidence score per item/region
+- SHOULD include seeds/inputs (potting soil, fertilizer, animal feed) where verifiable data exists
+- COULD allow user-submitted local prices behind feature flag with moderation workflows
+
+### Accuracy & Security (MUST):
+- MUST preserve raw vs normalized data side-by-side for auditability
+- MUST flag gaps/outliers/sudden jumps with QAFlag records
+- MUST version dataset snapshots when revisions occur
+- MUST keep all API keys/secrets server-side only
+- MUST rate-limit public endpoints per IP and per user
+- MUST enforce RBAC (anonymous, registered, analyst, admin)
+- SHOULD provide downloadable provenance reports with checksums
+- COULD add tamper-evident signed export bundles for educators/journalists
+
+### UI Requirements for Expanded Catalog (MUST):
+- Provide category browsing with clear organization (food/household/energy/inputs)
+- Search with synonyms (e.g., 'ground beef' vs 'mince', 'hamburger')
+- Favorites system that persists across sessions
+- Basket templates (Family of 4, Single adult, Tradesperson fuel-heavy)
+- MUST show unit and region coverage BEFORE adding item to chart
+- MUST display confidence badge (high/medium/low) on item cards
+
+### Data Source Requirements (MUST):
+- Use only reputable public/free sources with clear licensing
+- Store source URL/identifier, terms, and retrieval timestamps for every point
+- Do NOT claim "official" unless provider is recognized government or primary-data publisher
+- Support tier-1 sources: USDA (AMS, NASS), EIA, BLS, FRED
+
+## Assumptions & Needs Confirmation
+
+### Geography Scope:
+- **Assumption**: USA only at first (US-National, US-Midwest, US-Northeast, US-South, US-West regions)
+- **Needs Confirmation**: Whether to add state-level or city-level granularity where sources permit
+- **Future**: Multi-country support would require currency normalization stage in pipeline
+
+### Provider Definitions:
+- **Assumption**: "Free" means publicly available government datasets and Federal Reserve data with no API key requirements OR free-tier API access
+- **Needs Confirmation**: Whether free-tier with API key registration is acceptable (e.g., EIA API key)
+- **Clarify**: Maximum acceptable rate limits and whether to implement key rotation
+
+### Crowdsourced Local Prices:
+- **Assumption**: NOT implementing user-submitted prices in initial release due to anti-fraud complexity
+- **Needs Confirmation**: Whether crowdsourcing should be roadmapped with moderation workflows, receipt verification, outlier detection, and manual review queues
+- **Future**: Would require CAPTCHA, rate limiting per user, geolocation verification, reviewer role, and abuse detection ML
+
+### Data Frequency:
+- **Assumption**: Monthly alignment is default for wage vs price comparisons
+- **Needs Confirmation**: Whether to support weekly or daily for high-frequency commodities like fuel
+- **Clarify**: Aggregation method preferences (end-of-period vs mean) per category
+
+### Historical Depth:
+- **Assumption**: Target 10+ years of history where available (minimum 5 years for confidence scoring)
+- **Needs Confirmation**: Whether to backfill to 1950s for generational timeline or start from data availability date
+- **Clarify**: How to handle items with limited history (e.g., show but flag as "limited historical data")
+
+## Extensibility Hooks
+
+### Future Connector Categories:
+- Medical indices (OTC medications, prescription copay benchmarks if public data exists)
+- Transportation (public transit fares, vehicle maintenance parts)
+- Education (textbooks, tuition indices)
+- Communications (internet, mobile service benchmarks)
+- Insurance (health premium indices if available)
+
+### Region Granularity Expansion:
+- State-level where sources provide (EIA state-level electricity, state minimum wages)
+- Metro-area where available (BLS metro CPI, FRED metro rent indices)
+- Rural vs urban splits for agricultural inputs
+
+### Data Lab Mode for Analysts:
+- Feature-flagged advanced views with raw data downloads
+- Custom basket builder with arbitrary weights
+- Statistical analysis tools (correlation, regression on time series)
+- Annotation system for marking policy changes with citations
+- Batch export for research datasets with methodology bundles
+
+### Workflow Modes:
+- Educator Mode: Classroom-ready exports, discussion guides, citation generators
+- Journalist Mode: Embargo-ready charts with fact-check metadata
+- Policy Analyst Mode: Scenario modeling, wage increase simulations
+- Personal Finance Mode: Household budget tracking integrated with historical context
+
 ## Edge Case Handling
 
 - **API Outage**: Display last successful data with prominent "stale data" warning and retry timestamp, allow manual refresh attempt, show specific source failure messages
@@ -239,6 +444,12 @@ This is a sophisticated generational economics platform with long-run time-serie
 - **Large Time Series**: Progressive loading with skeleton states, virtualized rendering for performance
 - **Offline Use**: Cache previously viewed charts, show sync status, queue actions when offline
 - **Refresh Failures**: Show per-source error states, allow individual retry, preserve last successful data with age indicator
+- **Connector Circuit Breaker**: If connector trips circuit breaker, show maintenance mode, allow admin to reset, log incident
+- **Rate Limit Exceeded**: Queue requests, show backoff timer, suggest caching strategy to users
+- **Checksum Mismatch**: Flag potential tampering or provider revision, create new dataset version, notify admins
+- **Negative Prices**: Block with error-level QAFlag, require manual review before allowing through pipeline
+- **Missing Required Fields**: Reject at schema validation, log parsing error, alert connector maintainer
+- **Duplicate Data Points**: Auto-deduplicate by itemId+date+region, log occurrence, maintain audit trail
 
 ## Design Direction
 
