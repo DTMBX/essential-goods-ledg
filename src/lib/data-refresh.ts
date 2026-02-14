@@ -1,4 +1,4 @@
-import type { Source } from './types'
+import type { Source, RefreshSchedule, RefreshScheduleConfig } from './types'
 
 export interface DataRefreshStatus {
   lastRefresh: string
@@ -10,6 +10,7 @@ export interface DataRefreshStatus {
 export interface RefreshMetadata {
   sources: Record<string, DataRefreshStatus>
   lastGlobalRefresh: string
+  scheduleConfig?: RefreshScheduleConfig
 }
 
 export async function refreshDataSource(sourceId: string): Promise<DataRefreshStatus> {
@@ -84,4 +85,57 @@ export function formatRefreshTimestamp(timestamp: string): string {
     minute: '2-digit',
     hour12: true
   })
+}
+
+export function calculateNextRefresh(schedule: RefreshSchedule, fromDate: Date = new Date()): Date | null {
+  if (schedule === 'manual' || schedule === 'disabled') {
+    return null
+  }
+  
+  const next = new Date(fromDate)
+  
+  if (schedule === 'hourly') {
+    next.setHours(next.getHours() + 1)
+    next.setMinutes(0)
+    next.setSeconds(0)
+    next.setMilliseconds(0)
+  } else if (schedule === 'daily') {
+    next.setDate(next.getDate() + 1)
+    next.setHours(2, 0, 0, 0)
+  }
+  
+  return next
+}
+
+export function getScheduleLabel(schedule: RefreshSchedule): string {
+  switch (schedule) {
+    case 'manual':
+      return 'Manual Only'
+    case 'hourly':
+      return 'Every Hour'
+    case 'daily':
+      return 'Daily at 2:00 AM'
+    case 'disabled':
+      return 'Disabled'
+    default:
+      return 'Unknown'
+  }
+}
+
+export function shouldRefresh(lastRefresh: string, schedule: RefreshSchedule): boolean {
+  if (schedule === 'manual' || schedule === 'disabled') {
+    return false
+  }
+  
+  const now = Date.now()
+  const last = new Date(lastRefresh).getTime()
+  const diffMs = now - last
+  
+  if (schedule === 'hourly') {
+    return diffMs >= 3600000
+  } else if (schedule === 'daily') {
+    return diffMs >= 86400000
+  }
+  
+  return false
 }

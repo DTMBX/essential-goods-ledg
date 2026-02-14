@@ -85,11 +85,18 @@ This is a data-intensive application with sophisticated time-series visualizatio
 - **Success criteria**: URL contains all configuration parameters base64-encoded; decoded configuration exactly matches original; shared links work indefinitely; configuration hash provides tamper-evidence; UI clearly indicates when viewing a permalink vs modifying locally; any modifications to permalink-loaded config create a new configuration state
 
 ### Data Source Refresh Management
-- **Functionality**: User-initiated refresh of API data sources (USDA, EIA, BLS) with status tracking, timestamps, and per-source or global refresh controls
-- **Purpose**: Empower users to update data on-demand while maintaining transparency about data freshness and retrieval status
-- **Trigger**: User navigates to "Sources" tab or clicks data timestamp indicators on Home/Analytics views
-- **Progression**: View data sources list → Click "Refresh" on individual source or "Refresh All" → System initiates API requests (simulated) → Progress indicators show refreshing state → Status updates show success/error per source → Timestamp metadata persisted to KV storage → Updated retrieval times displayed throughout app
-- **Success criteria**: Refresh status persists across sessions; each source shows last refresh timestamp, connection status (success/error/idle), and retrieval message; failed refreshes provide actionable error messages; global refresh processes all sources in parallel; Home and Analytics views display "Updated X ago" indicators with click-through to Sources view; all source metadata (provider, license, URL) displayed with direct links to official documentation
+- **Functionality**: User-initiated and automated refresh of API data sources (USDA, EIA, BLS) with configurable schedules (hourly/daily/manual), status tracking, timestamps, and per-source or global refresh controls
+- **Purpose**: Empower users to keep data current through automatic scheduled updates or on-demand manual refreshes while maintaining full transparency about data freshness and retrieval status
+- **Trigger**: User navigates to "Sources" tab, clicks data timestamp indicators on Home/Analytics views, or automatic scheduler triggers based on configured frequency
+- **Progression**: View data sources list → Configure auto-refresh schedule (hourly/daily/manual) and enable/disable → Click "Refresh" on individual source or "Refresh All" for manual updates → System initiates API requests (simulated) → Progress indicators show refreshing state → Status updates show success/error per source → Timestamp metadata persisted to KV storage → Updated retrieval times displayed throughout app → Next scheduled refresh calculated and shown
+- **Success criteria**: Refresh status persists across sessions; each source shows last refresh timestamp, connection status (success/error/idle), and retrieval message; failed refreshes provide actionable error messages; global refresh processes all sources in parallel; auto-refresh scheduler runs in background when enabled; hourly schedule checks on the hour; daily schedule runs at 2:00 AM; schedule configuration persists and survives page reloads; UI shows next scheduled refresh time; users can toggle auto-refresh on/off; Home and Analytics views display "Updated X ago" indicators with click-through to Sources view; all source metadata (provider, license, URL) displayed with direct links to official documentation; audit logs track both manual and scheduled refresh operations
+
+#### Auto-Refresh Schedules:
+- **Manual Mode**: No automatic updates; all refreshes triggered explicitly by user action
+- **Hourly Schedule**: Data sources automatically checked and updated at the start of each hour (XX:00); suitable for users monitoring volatile commodity prices or time-sensitive analysis
+- **Daily Schedule**: Data sources automatically refreshed once per day at 2:00 AM local time; recommended for most users as it balances freshness with minimal resource usage
+- **Schedule Configuration**: Toggle to enable/disable auto-refresh; dropdown to select frequency; displays next scheduled refresh time and last scheduled refresh time; recommendations explain which schedule suits different use cases
+- **Graceful Degradation**: If a scheduled refresh fails, system retries on next schedule; user notified via toast; cached data remains available with "stale" indicator; manual refresh available as override
 
 ## Edge Case Handling
 

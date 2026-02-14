@@ -127,3 +127,19 @@ export interface AnalyticsConfig {
   verdictThreshold: number
   eventWindowMonths: number
 }
+
+export type RefreshSchedule = 'manual' | 'hourly' | 'daily' | 'disabled'
+
+export interface RefreshScheduleConfig {
+  enabled: boolean
+  schedule: RefreshSchedule
+  lastScheduledRefresh?: string
+  nextScheduledRefresh?: string
+  autoRefreshEnabled: boolean
+}
+
+export interface SourceRefreshSchedule {
+  sourceId: string
+  schedule: RefreshSchedule
+  enabled: boolean
+}

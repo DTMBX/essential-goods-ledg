@@ -2,10 +2,14 @@ import { Card } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useState } from 'react'
-import type { UserWageConfig } from '@/lib/types'
+import { useKV } from '@github/spark/hooks'
+import type { UserWageConfig, RefreshScheduleConfig } from '@/lib/types'
+import { getScheduleLabel } from '@/lib/data-refresh'
 import { toast } from 'sonner'
+import { CheckCircle, Clock } from '@phosphor-icons/react'
 
 interface SettingsViewProps {
   wageConfig: UserWageConfig
@@ -15,6 +19,12 @@ interface SettingsViewProps {
 export function SettingsView({ wageConfig, onUpdateWage }: SettingsViewProps) {
   const [localConfig, setLocalConfig] = useState<UserWageConfig>(wageConfig)
   const [customWage, setCustomWage] = useState(wageConfig.hourlyWage?.toString() || '15.00')
+  
+  const [scheduleConfig] = useKV<RefreshScheduleConfig>('refresh-schedule-config', {
+    enabled: true,
+    schedule: 'manual',
+    autoRefreshEnabled: false
+  })
 
   const handleSave = () => {
     const updatedConfig: UserWageConfig = {
@@ -35,6 +45,32 @@ export function SettingsView({ wageConfig, onUpdateWage }: SettingsViewProps) {
           Configure wage assumptions and regional preferences
         </p>
       </div>
+
+      {scheduleConfig && scheduleConfig.autoRefreshEnabled && (
+        <Card className="p-4 bg-accent/10 border-accent">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-full bg-accent/20 text-accent">
+              {scheduleConfig.schedule === 'manual' ? (
+                <Clock size={20} />
+              ) : (
+                <CheckCircle size={20} weight="fill" />
+              )}
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium">
+                Auto-Refresh: {scheduleConfig.schedule !== 'manual' && scheduleConfig.schedule !== 'disabled' ? 'Active' : 'Manual Mode'}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Schedule: {getScheduleLabel(scheduleConfig.schedule)}
+              </p>
+            </div>
+            <Badge variant="outline" className="gap-1.5">
+              <CheckCircle size={12} weight="fill" />
+              Enabled
+            </Badge>
+          </div>
+        </Card>
+      )}
 
       <Card className="p-6">
         <h2 className="text-xl font-semibold mb-4">Wage Configuration</h2>
