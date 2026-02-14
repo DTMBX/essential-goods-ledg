@@ -1,14 +1,17 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Card } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
-import { ChartLine, Table, Calendar, FileText } from '@phosphor-icons/react'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { ChartLine, Table, Calendar, FileText, Link as LinkIcon } from '@phosphor-icons/react'
 import { AffordabilityDashboard } from '@/components/AffordabilityDashboard'
 import { OutpacingRankings } from '@/components/OutpacingRankings'
 import { EventStudyView } from '@/components/EventStudyView'
 import { AnalyticsMethodology } from '@/components/AnalyticsMethodology'
+import { SharePermalink } from '@/components/SharePermalink'
 import { ITEMS } from '@/lib/data'
+import { getPermalinkFromURL } from '@/lib/permalink'
 import type { AnalyticsConfig, MetricMode } from '@/lib/types'
 
 interface AnalyticsViewProps {
@@ -19,22 +22,33 @@ export function AnalyticsView({ initialConfig }: AnalyticsViewProps) {
   const defaultEndDate = new Date().toISOString().split('T')[0]
   const defaultStartDate = new Date(Date.now() - 365 * 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
   
-  const [config, setConfig] = useState<AnalyticsConfig>({
-    region: initialConfig?.region || 'US-National',
-    dateRange: {
-      start: initialConfig?.dateRange?.start || defaultStartDate,
-      end: initialConfig?.dateRange?.end || defaultEndDate
-    },
-    baseDate: initialConfig?.baseDate || defaultStartDate,
-    wageType: initialConfig?.wageType || 'minimum',
-    basketItemIds: initialConfig?.basketItemIds || ITEMS.map(i => i.id),
-    metricMode: initialConfig?.metricMode || 'hours-of-work',
-    verdictThreshold: initialConfig?.verdictThreshold || 1.00,
-    eventWindowMonths: initialConfig?.eventWindowMonths || 3
+  const [loadedFromPermalink, setLoadedFromPermalink] = useState(false)
+  
+  const [config, setConfig] = useState<AnalyticsConfig>(() => {
+    const permalinkConfig = getPermalinkFromURL()
+    if (permalinkConfig) {
+      setLoadedFromPermalink(true)
+      return permalinkConfig
+    }
+    
+    return {
+      region: initialConfig?.region || 'US-National',
+      dateRange: {
+        start: initialConfig?.dateRange?.start || defaultStartDate,
+        end: initialConfig?.dateRange?.end || defaultEndDate
+      },
+      baseDate: initialConfig?.baseDate || defaultStartDate,
+      wageType: initialConfig?.wageType || 'minimum',
+      basketItemIds: initialConfig?.basketItemIds || ITEMS.map(i => i.id),
+      metricMode: initialConfig?.metricMode || 'hours-of-work',
+      verdictThreshold: initialConfig?.verdictThreshold || 1.00,
+      eventWindowMonths: initialConfig?.eventWindowMonths || 3
+    }
   })
 
   const handleConfigChange = (updates: Partial<AnalyticsConfig>) => {
     setConfig(prev => ({ ...prev, ...updates }))
+    setLoadedFromPermalink(false)
   }
 
   const handleDateRangePreset = (preset: '1y' | '3y' | '5y' | '10y' | 'all') => {
@@ -77,92 +91,107 @@ export function AnalyticsView({ initialConfig }: AnalyticsViewProps) {
         </p>
       </div>
 
+      {loadedFromPermalink && (
+        <Alert className="border-accent bg-accent/5">
+          <LinkIcon size={16} className="!text-accent" />
+          <AlertDescription>
+            Configuration loaded from permalink. Any changes you make will create a new configuration.
+          </AlertDescription>
+        </Alert>
+      )}
+
       <Card className="p-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div>
-            <label className="text-sm font-medium mb-2 block">Region</label>
-            <Select 
-              value={config.region} 
-              onValueChange={(value) => handleConfigChange({ region: value })}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="US-National">US - National</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div>
-            <label className="text-sm font-medium mb-2 block">Wage Type</label>
-            <Select 
-              value={config.wageType} 
-              onValueChange={(value: 'minimum' | 'median') => handleConfigChange({ wageType: value })}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="minimum">Minimum Wage</SelectItem>
-                <SelectItem value="median">Median Wage</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div>
-            <label className="text-sm font-medium mb-2 block">Metric Mode</label>
-            <Select 
-              value={config.metricMode} 
-              onValueChange={(value: MetricMode) => handleConfigChange({ metricMode: value })}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="nominal">Nominal ($)</SelectItem>
-                <SelectItem value="real">Real ($, CPI-adj)</SelectItem>
-                <SelectItem value="hours-of-work">Hours of Work</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div>
-            <label className="text-sm font-medium mb-2 block">Time Period</label>
-            <div className="flex gap-1">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="flex-1"
-                onClick={() => handleDateRangePreset('1y')}
+        <div className="flex flex-col gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+              <label className="text-sm font-medium mb-2 block">Region</label>
+              <Select 
+                value={config.region} 
+                onValueChange={(value) => handleConfigChange({ region: value })}
               >
-                1Y
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="flex-1"
-                onClick={() => handleDateRangePreset('3y')}
-              >
-                3Y
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="flex-1"
-                onClick={() => handleDateRangePreset('5y')}
-              >
-                5Y
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="flex-1"
-                onClick={() => handleDateRangePreset('10y')}
-              >
-                10Y
-              </Button>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="US-National">US - National</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
+
+            <div>
+              <label className="text-sm font-medium mb-2 block">Wage Type</label>
+              <Select 
+                value={config.wageType} 
+                onValueChange={(value: 'minimum' | 'median') => handleConfigChange({ wageType: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="minimum">Minimum Wage</SelectItem>
+                  <SelectItem value="median">Median Wage</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium mb-2 block">Metric Mode</label>
+              <Select 
+                value={config.metricMode} 
+                onValueChange={(value: MetricMode) => handleConfigChange({ metricMode: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="nominal">Nominal ($)</SelectItem>
+                  <SelectItem value="real">Real ($, CPI-adj)</SelectItem>
+                  <SelectItem value="hours-of-work">Hours of Work</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium mb-2 block">Time Period</label>
+              <div className="flex gap-1">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="flex-1"
+                  onClick={() => handleDateRangePreset('1y')}
+                >
+                  1Y
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="flex-1"
+                  onClick={() => handleDateRangePreset('3y')}
+                >
+                  3Y
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="flex-1"
+                  onClick={() => handleDateRangePreset('5y')}
+                >
+                  5Y
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="flex-1"
+                  onClick={() => handleDateRangePreset('10y')}
+                >
+                  10Y
+                </Button>
+              </div>
+            </div>
+          </div>
+        
+          <div className="flex justify-end mt-4 pt-4 border-t">
+            <SharePermalink config={config} />
           </div>
         </div>
       </Card>

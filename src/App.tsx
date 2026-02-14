@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Toaster } from '@/components/ui/sonner'
 import { useKV } from '@github/spark/hooks'
@@ -13,6 +13,13 @@ import type { UserWageConfig } from '@/lib/types'
 
 function App() {
   const [activeTab, setActiveTab] = useState('home')
+  
+  useEffect(() => {
+    const hash = window.location.hash.replace('#', '')
+    if (hash === 'analytics') {
+      setActiveTab('analytics')
+    }
+  }, [])
   
   const [wageConfig, setWageConfig] = useKV<UserWageConfig>('wage-config', {
     type: 'manual',

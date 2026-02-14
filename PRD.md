@@ -75,6 +75,14 @@ This is a data-intensive application with sophisticated time-series visualizatio
 - **Affordability Ratio Analysis**: Primary metric basket_affordability_ratio = basket_hours(t2) / basket_hours(t1), displayed prominently with both absolute change in hours and percentage change
 - **Real vs Nominal Toggles**: All views support switching between nominal dollars, CPI-adjusted real dollars (with disclosed index and base year), and hours-of-work metrics
 - **Methodology Card Export**: Downloadable document containing all formulas (wage_growth, item_growth, hours_worked, real_price, affordability_ratio), data sources with retrieval timestamps, region/jurisdiction details, time window, base dates, wage type (federal/state/city), basket composition, CPI series used, confidence flags, and data coverage metrics
+- **Shareable Permalinks**: Generate immutable URLs encoding complete analytics configurations (region, date range, base date, wage type, metric mode, basket composition, verdict threshold, event window) with tamper-evident hash for verification; automatically loads configuration from URL parameter when shared link is accessed; displays alert when viewing a permalink to indicate configuration is loaded from external source
+
+### Shareable Permalink Feature
+- **Functionality**: Generate and share permanent links that encode complete analytics configurations, enabling reproducible analysis and citation-ready URLs for research and reporting
+- **Purpose**: Allow users to share exact analytics configurations with colleagues, include in publications, archive in research documentation, and ensure analysis reproducibility across time
+- **Trigger**: User clicks "Share Configuration" button in Analytics view after configuring their desired analysis parameters
+- **Progression**: Configure analytics (region, dates, metrics) → Click "Share Configuration" → View dialog with permalink URL → Copy to clipboard → Share URL → Recipient opens URL → Analytics view automatically loads with identical configuration → Alert indicates loaded from permalink
+- **Success criteria**: URL contains all configuration parameters base64-encoded; decoded configuration exactly matches original; shared links work indefinitely; configuration hash provides tamper-evidence; UI clearly indicates when viewing a permalink vs modifying locally; any modifications to permalink-loaded config create a new configuration state
 
 ## Edge Case Handling
 
