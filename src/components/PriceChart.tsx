@@ -36,7 +36,7 @@ export function PriceChart({ data, metricMode = 'nominal', hourlyWage = 15 }: Pr
     const svg = d3.select(svgRef.current)
     svg.selectAll('*').remove()
 
-    const margin = { top: 20, right: 120, bottom: 40, left: 60 }
+    const margin = { top: 20, right: 120, bottom: 60, left: 60 }
     const width = dimensions.width - margin.left - margin.right
     const height = dimensions.height - margin.top - margin.bottom
 
@@ -68,10 +68,17 @@ export function PriceChart({ data, metricMode = 'nominal', hourlyWage = 15 }: Pr
 
     g.append('g')
       .attr('transform', `translate(0,${height})`)
-      .call(d3.axisBottom(x))
+      .call(d3.axisBottom(x).ticks(6).tickFormat((d) => {
+        const date = d as Date
+        return d3.timeFormat('%b %y')(date)
+      }))
       .selectAll('text')
       .style('font-family', 'var(--font-body)')
-      .style('font-size', '12px')
+      .style('font-size', '11px')
+      .attr('transform', 'rotate(-45)')
+      .style('text-anchor', 'end')
+      .attr('dx', '-0.5em')
+      .attr('dy', '0.5em')
 
     const yAxis = g.append('g')
       .call(d3.axisLeft(y))

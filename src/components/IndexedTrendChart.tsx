@@ -19,7 +19,7 @@ export function IndexedTrendChart({ dates, wageIndexed, basketIndexed, wageLabel
     const svg = d3.select(svgRef.current)
     svg.selectAll('*').remove()
 
-    const margin = { top: 20, right: 120, bottom: 50, left: 60 }
+    const margin = { top: 20, right: 120, bottom: 70, left: 60 }
     const width = container.clientWidth - margin.left - margin.right
     const height = 400 - margin.top - margin.bottom
 
@@ -47,13 +47,20 @@ export function IndexedTrendChart({ dates, wageIndexed, basketIndexed, wageLabel
 
     g.append('g')
       .attr('transform', `translate(0,${height})`)
-      .call(d3.axisBottom(xScale).ticks(6))
+      .call(d3.axisBottom(xScale).ticks(6).tickFormat((d) => {
+        const date = d as Date
+        return d3.timeFormat('%b %y')(date)
+      }))
       .call(g => g.select('.domain').attr('stroke', 'oklch(0.88 0.01 250)'))
       .call(g => g.selectAll('.tick line').attr('stroke', 'oklch(0.88 0.01 250)'))
       .call(g => g.selectAll('.tick text')
         .attr('fill', 'oklch(0.50 0.01 250)')
         .style('font-family', 'IBM Plex Sans, sans-serif')
-        .style('font-size', '12px'))
+        .style('font-size', '11px')
+        .attr('transform', 'rotate(-45)')
+        .style('text-anchor', 'end')
+        .attr('dx', '-0.5em')
+        .attr('dy', '0.5em'))
 
     g.append('g')
       .call(d3.axisLeft(yScale).ticks(8))
@@ -144,7 +151,7 @@ export function IndexedTrendChart({ dates, wageIndexed, basketIndexed, wageLabel
 
     g.append('text')
       .attr('x', width / 2)
-      .attr('y', height + 40)
+      .attr('y', height + 60)
       .attr('text-anchor', 'middle')
       .attr('fill', 'oklch(0.50 0.01 250)')
       .style('font-family', 'IBM Plex Sans, sans-serif')
