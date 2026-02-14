@@ -14,6 +14,7 @@ import { VolatilityExplorerView } from '@/components/VolatilityExplorerView'
 import { LearningModuleView } from '@/components/LearningModuleView'
 import { IconShowcase } from '@/components/IconShowcase'
 import { LoadingShowcase } from '@/components/LoadingStates'
+import { BrandShowcase } from '@/components/BrandShowcase'
 import type { UserWageConfig } from '@/lib/types'
 
 function App() {
@@ -35,6 +36,8 @@ function App() {
       setActiveTab('icons')
     } else if (hash === 'loading') {
       setActiveTab('loading')
+    } else if (hash === 'brand') {
+      setActiveTab('brand')
     }
   }, [])
   
@@ -142,6 +145,10 @@ function App() {
 
         {activeTab === 'loading' && (
           <LoadingShowcase />
+        )}
+
+        {activeTab === 'brand' && (
+          <BrandShowcase />
         )}
       </main>
 

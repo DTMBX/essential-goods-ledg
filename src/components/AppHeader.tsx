@@ -38,12 +38,12 @@ export function AppHeader({ activeTab, onTabChange, selectedItemsCount }: AppHea
                 onClick={() => onTabChange('home')}
                 className="flex items-center gap-2.5 min-w-0 group"
               >
-                <div className="w-9 h-9 lg:w-10 lg:h-10 flex-shrink-0 text-primary transition-transform duration-200 group-hover:scale-105">
-                  <Logo size={36} className="w-full h-full" />
+                <div className="flex-shrink-0 text-foreground transition-all duration-200 group-hover:text-primary">
+                  <Logo size={36} />
                 </div>
                 <div className="min-w-0 hidden sm:block">
-                  <h1 className="font-display font-bold text-base lg:text-lg leading-tight truncate">
-                    Chronos
+                  <h1 className="font-mono font-bold text-base lg:text-lg leading-tight truncate tracking-tight">
+                    CHRONOS
                   </h1>
                   <p className="text-xs text-muted-foreground leading-tight hidden lg:block">
                     Generational Economic Insights
