@@ -26,6 +26,8 @@ export interface WageSeries {
   wageValue: number
   wageType: 'minimum' | 'median' | 'sector' | 'user'
   sourceId?: string
+  effectiveDate?: string
+  jurisdiction?: 'federal' | 'state' | 'city'
 }
 
 export interface CPIDataPoint {
@@ -72,4 +74,56 @@ export interface ComparisonConfig {
   }
   metricMode: MetricMode
   region: string
+}
+
+export interface WageIncreaseEvent {
+  effectiveDate: string
+  oldWage: number
+  newWage: number
+  increase: number
+  increasePercent: number
+  region: string
+  jurisdiction: 'federal' | 'state' | 'city'
+}
+
+export interface AffordabilityMetrics {
+  itemId: string
+  itemName: string
+  hoursT1: number
+  hoursT2: number
+  affordabilityRatio: number
+  absoluteChange: number
+  percentChange: number
+  nominalGrowth: number
+  wageGrowth: number
+  relativeOutpacing: number
+}
+
+export interface BasketAffordabilityMetrics {
+  basketCostT1: number
+  basketCostT2: number
+  hoursT1: number
+  hoursT2: number
+  affordabilityRatio: number
+  absoluteChange: number
+  percentChange: number
+  nominalGrowth: number
+  wageGrowth: number
+  relativeOutpacing: number
+  verdict: 'kept-up' | 'lagged' | 'unclear'
+  confidenceLevel: 'high' | 'medium' | 'low'
+}
+
+export interface AnalyticsConfig {
+  region: string
+  dateRange: {
+    start: string
+    end: string
+  }
+  baseDate: string
+  wageType: 'minimum' | 'median'
+  basketItemIds: string[]
+  metricMode: MetricMode
+  verdictThreshold: number
+  eventWindowMonths: number
 }

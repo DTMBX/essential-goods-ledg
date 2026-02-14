@@ -7,7 +7,8 @@ import { ExploreView } from '@/components/ExploreView'
 import { CompareView } from '@/components/CompareView'
 import { SettingsView } from '@/components/SettingsView'
 import { MethodologyView } from '@/components/MethodologyView'
-import { House, MagnifyingGlass, ChartLine, Gear, BookOpen } from '@phosphor-icons/react'
+import { AnalyticsView } from '@/components/AnalyticsView'
+import { House, MagnifyingGlass, ChartLine, Gear, BookOpen, ChartLineUp } from '@phosphor-icons/react'
 import type { UserWageConfig } from '@/lib/types'
 
 function App() {
@@ -84,6 +85,10 @@ function App() {
                 </span>
               )}
             </TabsTrigger>
+            <TabsTrigger value="analytics" className="gap-2">
+              <ChartLineUp size={16} />
+              <span className="hidden sm:inline">Analytics</span>
+            </TabsTrigger>
             <TabsTrigger value="methodology" className="gap-2">
               <BookOpen size={16} />
               <span className="hidden sm:inline">Methodology</span>
@@ -122,6 +127,10 @@ function App() {
                 hourlyWage={wageConfig?.hourlyWage || 15}
               />
             )}
+          </TabsContent>
+
+          <TabsContent value="analytics">
+            <AnalyticsView />
           </TabsContent>
 
           <TabsContent value="methodology">

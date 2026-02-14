@@ -162,7 +162,9 @@ function generateWageHistory(
       date: date.toISOString().split('T')[0],
       wageValue: Math.round(currentWage * 100) / 100,
       wageType,
-      sourceId: 'bls-1'
+      sourceId: 'bls-1',
+      effectiveDate: date.toISOString().split('T')[0],
+      jurisdiction: 'federal'
     })
     
     date = new Date(date.setMonth(date.getMonth() + 1))
@@ -281,3 +283,157 @@ export function getPriceWithCPI(itemId: string, region: string = 'US-National'):
     }
   })
 }
+
+export function detectWageIncreaseEvents(
+  wageType: 'minimum' | 'median',
+  region: string = 'US-National'
+): WageIncreaseEvent[] {
+  const history = getWageHistory(wageType, region)
+  const events: WageIncreaseEvent[] = []
+  
+  for (let i = 1; i < history.length; i++) {
+    const prev = history[i - 1]
+    const curr = history[i]
+    
+    if (curr.wageValue > prev.wageValue) {
+      const increase = curr.wageValue - prev.wageValue
+      const increasePercent = (increase / prev.wageValue) * 100
+      
+      if (increasePercent > 1) {
+        events.push({
+          effectiveDate: curr.date,
+          oldWage: prev.wageValue,
+          newWage: curr.wageValue,
+          increase: Math.round(increase * 100) / 100,
+          increasePercent: Math.round(increasePercent * 100) / 100,
+          region: curr.region,
+          jurisdiction: curr.jurisdiction || 'federal'
+        })
+      }
+    }
+  }
+  
+  return events
+}
+
+export function calculateAffordabilityMetrics(
+  itemId: string,
+  dateT1: string,
+  dateT2: string,
+  wageT1: number,
+  wageT2: number,
+  region: string = 'US-National'
+): AffordabilityMetrics | null {
+  const priceHistory = getPriceHistory(itemId, region)
+  const item = getItemById(itemId)
+  
+  if (!item) return null
+  
+  const priceT1 = priceHistory.find(p => p.date === dateT1)
+  const priceT2 = priceHistory.find(p => p.date === dateT2)
+  
+  if (!priceT1 || !priceT2) return null
+  
+  const hoursT1 = calculateHoursOfWork(priceT1.nominalPrice, wageT1)
+  const hoursT2 = calculateHoursOfWork(priceT2.nominalPrice, wageT2)
+  
+  const affordabilityRatio = hoursT2 / hoursT1
+  const absoluteChange = hoursT2 - hoursT1
+  const percentChange = ((affordabilityRatio - 1) * 100)
+  
+  const nominalGrowth = ((priceT2.nominalPrice / priceT1.nominalPrice) - 1) * 100
+  const wageGrowth = ((wageT2 / wageT1) - 1) * 100
+  const relativeOutpacing = nominalGrowth - wageGrowth
+  
+  return {
+    itemId,
+    itemName: item.name,
+    hoursT1: Math.round(hoursT1 * 100) / 100,
+    hoursT2: Math.round(hoursT2 * 100) / 100,
+    affordabilityRatio: Math.round(affordabilityRatio * 1000) / 1000,
+    absoluteChange: Math.round(absoluteChange * 100) / 100,
+    percentChange: Math.round(percentChange * 100) / 100,
+    nominalGrowth: Math.round(nominalGrowth * 100) / 100,
+    wageGrowth: Math.round(wageGrowth * 100) / 100,
+    relativeOutpacing: Math.round(relativeOutpacing * 100) / 100
+  }
+}
+
+export function calculateBasketAffordabilityMetrics(
+  basketItemIds: string[],
+  dateT1: string,
+  dateT2: string,
+  wageT1: number,
+  wageT2: number,
+  region: string = 'US-National',
+  verdictThreshold: number = 1.00
+): BasketAffordabilityMetrics | null {
+  let basketCostT1 = 0
+  let basketCostT2 = 0
+  let validItems = 0
+  
+  for (const itemId of basketItemIds) {
+    const priceHistory = getPriceHistory(itemId, region)
+    const priceT1 = priceHistory.find(p => p.date === dateT1)
+    const priceT2 = priceHistory.find(p => p.date === dateT2)
+    
+    if (priceT1 && priceT2) {
+      basketCostT1 += priceT1.nominalPrice
+      basketCostT2 += priceT2.nominalPrice
+      validItems++
+    }
+  }
+  
+  if (validItems === 0) return null
+  
+  const hoursT1 = calculateHoursOfWork(basketCostT1, wageT1)
+  const hoursT2 = calculateHoursOfWork(basketCostT2, wageT2)
+  
+  const affordabilityRatio = hoursT2 / hoursT1
+  const absoluteChange = hoursT2 - hoursT1
+  const percentChange = ((affordabilityRatio - 1) * 100)
+  
+  const nominalGrowth = ((basketCostT2 / basketCostT1) - 1) * 100
+  const wageGrowth = ((wageT2 / wageT1) - 1) * 100
+  const relativeOutpacing = nominalGrowth - wageGrowth
+  
+  const coverageRatio = validItems / basketItemIds.length
+  let confidenceLevel: 'high' | 'medium' | 'low' = 'high'
+  if (coverageRatio < 0.7) confidenceLevel = 'low'
+  else if (coverageRatio < 0.9) confidenceLevel = 'medium'
+  
+  let verdict: 'kept-up' | 'lagged' | 'unclear'
+  if (confidenceLevel === 'low') {
+    verdict = 'unclear'
+  } else if (affordabilityRatio <= verdictThreshold) {
+    verdict = 'kept-up'
+  } else {
+    verdict = 'lagged'
+  }
+  
+  return {
+    basketCostT1: Math.round(basketCostT1 * 100) / 100,
+    basketCostT2: Math.round(basketCostT2 * 100) / 100,
+    hoursT1: Math.round(hoursT1 * 100) / 100,
+    hoursT2: Math.round(hoursT2 * 100) / 100,
+    affordabilityRatio: Math.round(affordabilityRatio * 1000) / 1000,
+    absoluteChange: Math.round(absoluteChange * 100) / 100,
+    percentChange: Math.round(percentChange * 100) / 100,
+    nominalGrowth: Math.round(nominalGrowth * 100) / 100,
+    wageGrowth: Math.round(wageGrowth * 100) / 100,
+    relativeOutpacing: Math.round(relativeOutpacing * 100) / 100,
+    verdict,
+    confidenceLevel
+  }
+}
+
+export function calculateIndexedSeries(
+  values: number[],
+  baseIndex: number = 0
+): number[] {
+  if (values.length === 0 || baseIndex >= values.length) return []
+  const baseValue = values[baseIndex]
+  return values.map(v => (v / baseValue) * 100)
+}
+
+import type { WageIncreaseEvent, AffordabilityMetrics, BasketAffordabilityMetrics } from './types'

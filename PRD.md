@@ -61,6 +61,21 @@ This is a data-intensive application with sophisticated time-series visualizatio
 - **Progression**: Configure export → Select format → Include metadata → Generate → Download with tamper-evident hash → Optionally create public permalink
 - **Success criteria**: Exports are publication-ready, metadata is comprehensive, permalinks are immutable, and exports can be independently verified
 
+### Wage vs Essentials Analytics Module
+- **Functionality**: Comprehensive analysis quantifying whether minimum wage increases keep up with essential-goods inflation through multi-dimensional affordability metrics
+- **Purpose**: Provide workers, policymakers, advocates, journalists, and educators with evidence-driven insights on purchasing power trends and wage-price dynamics
+- **Trigger**: User navigates to "Analytics" tab from main navigation
+- **Progression**: Select region → Choose time window → View dashboard with verdict ("kept up" / "lagged" / "unclear") → Explore item-level outpacing rankings → Analyze wage increase event studies → Review methodology → Export methodology card + CSV data
+- **Success criteria**: All calculations are deterministic and reproducible, verdicts show transparent logic with configurable thresholds, event studies detect wage change dates accurately, exports include complete methodology cards with formulas and data provenance
+
+#### Sub-features:
+- **Minimum Wage vs Basket Dashboard**: Headline verdict on affordability change with indexed trend chart overlaying wage_index(t) vs basket_index(t) where both are normalized to 100 at user-selected base date
+- **Item Outpacing Rankings**: Sortable table showing relative_outpacing_i = item_growth - wage_growth for each essential item, ranked by magnitude, with bar chart visualization
+- **Wage Increase Event Studies**: Timeline of minimum wage effective dates with pre/post affordability windows (configurable 3/6/12 month periods), showing Δhours_of_work for basket and key items
+- **Affordability Ratio Analysis**: Primary metric basket_affordability_ratio = basket_hours(t2) / basket_hours(t1), displayed prominently with both absolute change in hours and percentage change
+- **Real vs Nominal Toggles**: All views support switching between nominal dollars, CPI-adjusted real dollars (with disclosed index and base year), and hours-of-work metrics
+- **Methodology Card Export**: Downloadable document containing all formulas (wage_growth, item_growth, hours_worked, real_price, affordability_ratio), data sources with retrieval timestamps, region/jurisdiction details, time window, base dates, wage type (federal/state/city), basket composition, CPI series used, confidence flags, and data coverage metrics
+
 ## Edge Case Handling
 
 - **API Outage**: Display last successful data with prominent "stale data" warning and retry timestamp
