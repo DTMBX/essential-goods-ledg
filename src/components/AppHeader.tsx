@@ -21,38 +21,38 @@ export function AppHeader({ activeTab, onTabChange, selectedItemsCount }: AppHea
       <header className="border-b bg-card/95 backdrop-blur-md sticky top-0 z-40 shadow-sm">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16 lg:h-[72px]">
-            <div className="flex items-center gap-3 min-w-0">
+            <div className="flex items-center gap-2 lg:gap-3 min-w-0 flex-1">
               {isMobile && (
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => setMobileNavOpen(true)}
-                  className="flex-shrink-0 h-10 w-10 rounded-lg hover:bg-muted lg:hidden"
+                  className="flex-shrink-0 h-9 w-9 lg:h-10 lg:w-10 rounded-lg hover:bg-muted lg:hidden"
                   aria-label="Open navigation menu"
                 >
-                  <List size={24} weight="bold" />
+                  <List size={22} weight="bold" />
                 </Button>
               )}
               
               <button
                 onClick={() => onTabChange('home')}
-                className="flex items-center gap-2.5 min-w-0 group"
+                className="flex items-center gap-2 lg:gap-2.5 min-w-0 flex-1 group"
               >
                 <div className="flex-shrink-0 text-foreground transition-all duration-200 group-hover:text-primary">
-                  <Logo size={36} />
+                  <Logo size={isMobile ? 32 : 36} />
                 </div>
                 <div className="min-w-0 hidden sm:block">
-                  <h1 className="font-mono font-bold text-base lg:text-lg leading-tight truncate tracking-tight">
+                  <h1 className="font-mono font-bold text-sm lg:text-base leading-tight truncate tracking-tight">
                     CHRONOS
                   </h1>
-                  <p className="text-xs text-muted-foreground leading-tight hidden lg:block">
+                  <p className="text-[10px] lg:text-xs text-muted-foreground leading-tight hidden md:block truncate">
                     Generational Economic Insights
                   </p>
                 </div>
               </button>
             </div>
 
-            <div className="hidden lg:flex items-center gap-6">
+            <div className="hidden lg:flex items-center gap-6 flex-shrink-0">
               <DesktopNav
                 activeTab={activeTab}
                 onTabChange={onTabChange}
