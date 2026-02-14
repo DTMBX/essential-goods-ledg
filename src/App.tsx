@@ -8,6 +8,7 @@ import { CompareView } from '@/components/CompareView'
 import { SettingsView } from '@/components/SettingsView'
 import { MethodologyView } from '@/components/MethodologyView'
 import { AnalyticsView } from '@/components/AnalyticsView'
+import { DataSourcesView } from '@/components/DataSourcesView'
 import type { UserWageConfig } from '@/lib/types'
 
 function App() {
@@ -17,6 +18,8 @@ function App() {
     const hash = window.location.hash.replace('#', '')
     if (hash === 'analytics') {
       setActiveTab('analytics')
+    } else if (hash === 'sources') {
+      setActiveTab('sources')
     }
   }, [])
   
@@ -100,6 +103,10 @@ function App() {
             wageConfig={wageConfig}
             onUpdateWage={handleUpdateWage}
           />
+        )}
+
+        {activeTab === 'sources' && (
+          <DataSourcesView />
         )}
       </main>
 

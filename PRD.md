@@ -84,9 +84,16 @@ This is a data-intensive application with sophisticated time-series visualizatio
 - **Progression**: Configure analytics (region, dates, metrics) → Click "Share Configuration" → View dialog with permalink URL → Copy to clipboard → Share URL → Recipient opens URL → Analytics view automatically loads with identical configuration → Alert indicates loaded from permalink
 - **Success criteria**: URL contains all configuration parameters base64-encoded; decoded configuration exactly matches original; shared links work indefinitely; configuration hash provides tamper-evidence; UI clearly indicates when viewing a permalink vs modifying locally; any modifications to permalink-loaded config create a new configuration state
 
+### Data Source Refresh Management
+- **Functionality**: User-initiated refresh of API data sources (USDA, EIA, BLS) with status tracking, timestamps, and per-source or global refresh controls
+- **Purpose**: Empower users to update data on-demand while maintaining transparency about data freshness and retrieval status
+- **Trigger**: User navigates to "Sources" tab or clicks data timestamp indicators on Home/Analytics views
+- **Progression**: View data sources list → Click "Refresh" on individual source or "Refresh All" → System initiates API requests (simulated) → Progress indicators show refreshing state → Status updates show success/error per source → Timestamp metadata persisted to KV storage → Updated retrieval times displayed throughout app
+- **Success criteria**: Refresh status persists across sessions; each source shows last refresh timestamp, connection status (success/error/idle), and retrieval message; failed refreshes provide actionable error messages; global refresh processes all sources in parallel; Home and Analytics views display "Updated X ago" indicators with click-through to Sources view; all source metadata (provider, license, URL) displayed with direct links to official documentation
+
 ## Edge Case Handling
 
-- **API Outage**: Display last successful data with prominent "stale data" warning and retry timestamp
+- **API Outage**: Display last successful data with prominent "stale data" warning and retry timestamp, allow manual refresh attempt, show specific source failure messages
 - **Missing Region Coverage**: Show national/broader geography as fallback with explicit note about granularity
 - **Unit Mismatch**: Flag items with inconsistent units, show conversion formula, preserve raw values
 - **Outliers/Anomalies**: Calculate statistical bounds, flag suspicious values, show confidence rating
@@ -94,6 +101,7 @@ This is a data-intensive application with sophisticated time-series visualizatio
 - **Empty State**: Show example baskets and guided tours for first-time users
 - **Large Time Series**: Progressive loading with skeleton states, virtualized rendering for performance
 - **Offline Use**: Cache previously viewed charts, show sync status, queue actions when offline
+- **Refresh Failures**: Show per-source error states, allow individual retry, preserve last successful data with age indicator
 
 ## Design Direction
 

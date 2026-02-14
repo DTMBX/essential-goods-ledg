@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { House, MagnifyingGlass, ChartLine, ChartLineUp, BookOpen, Gear } from '@phosphor-icons/react'
+import { House, MagnifyingGlass, ChartLine, ChartLineUp, BookOpen, Database, Gear } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 
 interface DesktopNavProps {
@@ -14,6 +14,7 @@ const navItems = [
   { id: 'compare', label: 'Compare', icon: ChartLine, badge: true },
   { id: 'analytics', label: 'Analytics', icon: ChartLineUp },
   { id: 'methodology', label: 'Methodology', icon: BookOpen },
+  { id: 'sources', label: 'Sources', icon: Database },
   { id: 'settings', label: 'Settings', icon: Gear },
 ]
 

@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { ChartLine, Table, Calendar, FileText, Link as LinkIcon } from '@phosphor-icons/react'
+import { ChartLine, Table, Calendar, FileText, Link as LinkIcon, Clock } from '@phosphor-icons/react'
 import { AffordabilityDashboard } from '@/components/AffordabilityDashboard'
 import { OutpacingRankings } from '@/components/OutpacingRankings'
 import { EventStudyView } from '@/components/EventStudyView'
@@ -12,6 +12,8 @@ import { AnalyticsMethodology } from '@/components/AnalyticsMethodology'
 import { SharePermalink } from '@/components/SharePermalink'
 import { ITEMS } from '@/lib/data'
 import { getPermalinkFromURL } from '@/lib/permalink'
+import { useKV } from '@github/spark/hooks'
+import { getTimeSinceRefresh, type RefreshMetadata } from '@/lib/data-refresh'
 import type { AnalyticsConfig, MetricMode } from '@/lib/types'
 
 interface AnalyticsViewProps {
@@ -23,6 +25,11 @@ export function AnalyticsView({ initialConfig }: AnalyticsViewProps) {
   const defaultStartDate = new Date(Date.now() - 365 * 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
   
   const [loadedFromPermalink, setLoadedFromPermalink] = useState(false)
+  
+  const [refreshMetadata] = useKV<RefreshMetadata>('data-refresh-metadata', {
+    sources: {},
+    lastGlobalRefresh: new Date().toISOString()
+  })
   
   const [config, setConfig] = useState<AnalyticsConfig>(() => {
     const permalinkConfig = getPermalinkFromURL()
@@ -84,11 +91,26 @@ export function AnalyticsView({ initialConfig }: AnalyticsViewProps) {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="font-display text-3xl font-bold mb-2">Wage vs Essentials Analytics</h1>
-        <p className="text-muted-foreground">
-          Quantifying whether minimum wage increases keep up with essential-goods inflation
-        </p>
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h1 className="font-display text-3xl font-bold mb-2">Wage vs Essentials Analytics</h1>
+          <p className="text-muted-foreground">
+            Quantifying whether minimum wage increases keep up with essential-goods inflation
+          </p>
+        </div>
+        {refreshMetadata?.lastGlobalRefresh && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => window.location.hash = 'sources'}
+            className="gap-2 text-muted-foreground hover:text-foreground"
+          >
+            <Clock size={14} />
+            <span className="text-xs">
+              Data: {getTimeSinceRefresh(refreshMetadata.lastGlobalRefresh)}
+            </span>
+          </Button>
+        )}
       </div>
 
       {loadedFromPermalink && (

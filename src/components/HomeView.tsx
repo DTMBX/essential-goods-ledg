@@ -9,10 +9,14 @@ import {
   TrendUp,
   Info,
   ChartLine,
-  Percent
+  Percent,
+  ArrowsClockwise
 } from '@phosphor-icons/react'
-import { ITEMS, getLatestPrice, calculateHoursOfWork, calculatePriceChange, getPriceHistory, getCPIHistory, calculateInflationRate } from '@/lib/data'
+import { ITEMS, getLatestPrice, calculateHoursOfWork, calculatePriceChange, getPriceHistory, getCPIHistory, calculateInflationRate, SOURCES } from '@/lib/data'
 import type { UserWageConfig } from '@/lib/types'
+import { useKV } from '@github/spark/hooks'
+import { useState } from 'react'
+import { getTimeSinceRefresh, type RefreshMetadata } from '@/lib/data-refresh'
 
 interface HomeViewProps {
   wageConfig: UserWageConfig
@@ -21,6 +25,11 @@ interface HomeViewProps {
 }
 
 export function HomeView({ wageConfig, onExplore, onCompare }: HomeViewProps) {
+  const [refreshMetadata] = useKV<RefreshMetadata>('data-refresh-metadata', {
+    sources: {},
+    lastGlobalRefresh: new Date().toISOString()
+  })
+  
   const basketItems = ITEMS.slice(0, 8)
   
   const totalBasketCost = basketItems.reduce((sum, item) => {
@@ -49,11 +58,26 @@ export function HomeView({ wageConfig, onExplore, onCompare }: HomeViewProps) {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold mb-2">Essential Goods Ledger</h1>
-        <p className="text-muted-foreground">
-          Track everyday necessities through evidence-driven price and affordability data
-        </p>
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h1 className="text-3xl font-bold mb-2">Essential Goods Ledger</h1>
+          <p className="text-muted-foreground">
+            Track everyday necessities through evidence-driven price and affordability data
+          </p>
+        </div>
+        {refreshMetadata?.lastGlobalRefresh && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => window.location.hash = 'sources'}
+            className="gap-2 text-muted-foreground hover:text-foreground"
+          >
+            <Clock size={14} />
+            <span className="text-xs">
+              Updated {getTimeSinceRefresh(refreshMetadata.lastGlobalRefresh)}
+            </span>
+          </Button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

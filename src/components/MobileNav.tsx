@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, House, MagnifyingGlass, ChartLine, ChartLineUp, BookOpen, Gear } from '@phosphor-icons/react'
+import { X, House, MagnifyingGlass, ChartLine, ChartLineUp, BookOpen, Database, Gear } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
@@ -18,6 +18,7 @@ const navItems = [
   { id: 'compare', label: 'Compare', icon: ChartLine, description: 'Chart builder', badge: true },
   { id: 'analytics', label: 'Analytics', icon: ChartLineUp, description: 'Wage vs essentials' },
   { id: 'methodology', label: 'Methodology', icon: BookOpen, description: 'Formulas & sources' },
+  { id: 'sources', label: 'Sources', icon: Database, description: 'API data refresh' },
   { id: 'settings', label: 'Settings', icon: Gear, description: 'Configure wage' },
 ]
 
