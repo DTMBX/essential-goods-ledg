@@ -1,21 +1,22 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  X, 
-  House, 
-  MagnifyingGlass, 
-  ChartLine, 
-  ChartLineUp, 
-  Users, 
-  Waves, 
-  GraduationCap, 
-  BookOpen, 
-  Database, 
-  Gear 
-} from '@phosphor-icons/react'
+import { X } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
+import { Logo } from '@/components/Logo'
+import {
+  HomeIcon,
+  ExploreIcon,
+  CompareIcon,
+  AnalyticsIcon,
+  GenerationsIcon,
+  VolatilityIcon,
+  EducationIcon,
+  MethodologyIcon,
+  DataSourceIcon,
+  SettingsIcon
+} from '@/components/icons'
 
 interface MobileNavProps {
   isOpen: boolean
@@ -26,16 +27,16 @@ interface MobileNavProps {
 }
 
 const navItems = [
-  { id: 'home', label: 'Home', icon: House, description: 'Dashboard overview' },
-  { id: 'explore', label: 'Explore', icon: MagnifyingGlass, description: 'Browse essential goods' },
-  { id: 'compare', label: 'Compare', icon: ChartLine, description: 'Chart builder', badge: true },
-  { id: 'analytics', label: 'Analytics', icon: ChartLineUp, description: 'Wage vs essentials' },
-  { id: 'generations', label: 'Generations', icon: Users, description: 'Cross-generational timeline', highlight: true },
-  { id: 'volatility', label: 'Volatility', icon: Waves, description: 'Stability explorer', highlight: true },
-  { id: 'learn', label: 'Learn', icon: GraduationCap, description: 'Economic literacy', highlight: true },
-  { id: 'methodology', label: 'Methodology', icon: BookOpen, description: 'Formulas & sources' },
-  { id: 'sources', label: 'Sources', icon: Database, description: 'API data refresh' },
-  { id: 'settings', label: 'Settings', icon: Gear, description: 'Configure wage' },
+  { id: 'home', label: 'Home', icon: HomeIcon, description: 'Dashboard overview' },
+  { id: 'explore', label: 'Explore', icon: ExploreIcon, description: 'Browse essential goods' },
+  { id: 'compare', label: 'Compare', icon: CompareIcon, description: 'Chart builder', badge: true },
+  { id: 'analytics', label: 'Analytics', icon: AnalyticsIcon, description: 'Wage vs essentials' },
+  { id: 'generations', label: 'Generations', icon: GenerationsIcon, description: 'Cross-generational timeline', highlight: true },
+  { id: 'volatility', label: 'Volatility', icon: VolatilityIcon, description: 'Stability explorer', highlight: true },
+  { id: 'learn', label: 'Learn', icon: EducationIcon, description: 'Economic literacy', highlight: true },
+  { id: 'methodology', label: 'Methodology', icon: MethodologyIcon, description: 'Formulas & sources' },
+  { id: 'sources', label: 'Sources', icon: DataSourceIcon, description: 'API data refresh' },
+  { id: 'settings', label: 'Settings', icon: SettingsIcon, description: 'Configure wage' },
 ]
 
 export function MobileNav({ isOpen, onClose, activeTab, onTabChange, selectedItemsCount }: MobileNavProps) {
@@ -77,15 +78,15 @@ export function MobileNav({ isOpen, onClose, activeTab, onTabChange, selectedIte
           >
             <div className="flex items-center justify-between p-6 border-b border-border">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center shadow-md">
-                  <span className="text-primary-foreground font-bold font-mono text-sm">EGL</span>
+                <div className="w-10 h-10 text-primary">
+                  <Logo size={40} />
                 </div>
                 <div>
                   <h2 className="font-display font-bold text-base leading-tight">
-                    Essential Goods
+                    Chronos
                   </h2>
                   <p className="text-xs text-muted-foreground leading-tight">
-                    Ledger
+                    Economic Insights
                   </p>
                 </div>
               </div>
@@ -134,7 +135,7 @@ export function MobileNav({ isOpen, onClose, activeTab, onTabChange, selectedIte
                         <div className="relative z-10 flex items-center gap-4 flex-1">
                           <Icon
                             size={22}
-                            weight={isActive ? 'fill' : 'regular'}
+                            weight={isActive ? 'bold' : 'regular'}
                             className={cn(
                               'flex-shrink-0 transition-transform duration-200',
                               !isActive && 'group-hover:scale-110'

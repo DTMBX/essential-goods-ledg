@@ -12,6 +12,7 @@ import { DataSourcesView } from '@/components/DataSourcesView'
 import { GenerationalDashboardView } from '@/components/GenerationalDashboardView'
 import { VolatilityExplorerView } from '@/components/VolatilityExplorerView'
 import { LearningModuleView } from '@/components/LearningModuleView'
+import { IconShowcase } from '@/components/IconShowcase'
 import type { UserWageConfig } from '@/lib/types'
 
 function App() {
@@ -29,6 +30,8 @@ function App() {
       setActiveTab('volatility')
     } else if (hash === 'learn') {
       setActiveTab('learn')
+    } else if (hash === 'icons') {
+      setActiveTab('icons')
     }
   }, [])
   
@@ -128,6 +131,10 @@ function App() {
 
         {activeTab === 'sources' && (
           <DataSourcesView />
+        )}
+
+        {activeTab === 'icons' && (
+          <IconShowcase />
         )}
       </main>
 

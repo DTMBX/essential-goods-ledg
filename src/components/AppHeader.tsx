@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { MobileNav } from '@/components/MobileNav'
 import { DesktopNav } from '@/components/DesktopNav'
 import { useIsMobile } from '@/hooks/use-mobile'
+import { Logo } from '@/components/Logo'
 
 interface AppHeaderProps {
   activeTab: string
@@ -37,17 +38,15 @@ export function AppHeader({ activeTab, onTabChange, selectedItemsCount }: AppHea
                 onClick={() => onTabChange('home')}
                 className="flex items-center gap-2.5 min-w-0 group"
               >
-                <div className="w-9 h-9 lg:w-10 lg:h-10 rounded-lg bg-primary flex items-center justify-center shadow-md transition-transform duration-200 group-hover:scale-105 flex-shrink-0">
-                  <span className="text-primary-foreground font-bold font-mono text-xs lg:text-sm">
-                    EGL
-                  </span>
+                <div className="w-9 h-9 lg:w-10 lg:h-10 flex-shrink-0 text-primary transition-transform duration-200 group-hover:scale-105">
+                  <Logo size={36} className="w-full h-full" />
                 </div>
                 <div className="min-w-0 hidden sm:block">
                   <h1 className="font-display font-bold text-base lg:text-lg leading-tight truncate">
-                    Essential Goods Ledger
+                    Chronos
                   </h1>
                   <p className="text-xs text-muted-foreground leading-tight hidden lg:block">
-                    Generational Economic Timeline
+                    Generational Economic Insights
                   </p>
                 </div>
               </button>

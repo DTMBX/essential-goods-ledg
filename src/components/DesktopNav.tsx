@@ -1,17 +1,17 @@
 import { motion } from 'framer-motion'
-import { 
-  House, 
-  MagnifyingGlass, 
-  ChartLine, 
-  ChartLineUp, 
-  Users, 
-  Waves, 
-  GraduationCap, 
-  BookOpen, 
-  Database, 
-  Gear 
-} from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
+import {
+  HomeIcon,
+  ExploreIcon,
+  CompareIcon,
+  AnalyticsIcon,
+  GenerationsIcon,
+  VolatilityIcon,
+  EducationIcon,
+  MethodologyIcon,
+  DataSourceIcon,
+  SettingsIcon
+} from '@/components/icons'
 
 interface DesktopNavProps {
   activeTab: string
@@ -20,16 +20,16 @@ interface DesktopNavProps {
 }
 
 const navItems = [
-  { id: 'home', label: 'Home', icon: House },
-  { id: 'explore', label: 'Explore', icon: MagnifyingGlass },
-  { id: 'compare', label: 'Compare', icon: ChartLine, badge: true },
-  { id: 'analytics', label: 'Analytics', icon: ChartLineUp },
-  { id: 'generations', label: 'Generations', icon: Users, highlight: true },
-  { id: 'volatility', label: 'Volatility', icon: Waves, highlight: true },
-  { id: 'learn', label: 'Learn', icon: GraduationCap, highlight: true },
-  { id: 'methodology', label: 'Methodology', icon: BookOpen },
-  { id: 'sources', label: 'Sources', icon: Database },
-  { id: 'settings', label: 'Settings', icon: Gear },
+  { id: 'home', label: 'Home', icon: HomeIcon },
+  { id: 'explore', label: 'Explore', icon: ExploreIcon },
+  { id: 'compare', label: 'Compare', icon: CompareIcon, badge: true },
+  { id: 'analytics', label: 'Analytics', icon: AnalyticsIcon },
+  { id: 'generations', label: 'Generations', icon: GenerationsIcon, highlight: true },
+  { id: 'volatility', label: 'Volatility', icon: VolatilityIcon, highlight: true },
+  { id: 'learn', label: 'Learn', icon: EducationIcon, highlight: true },
+  { id: 'methodology', label: 'Methodology', icon: MethodologyIcon },
+  { id: 'sources', label: 'Sources', icon: DataSourceIcon },
+  { id: 'settings', label: 'Settings', icon: SettingsIcon },
 ]
 
 export function DesktopNav({ activeTab, onTabChange, selectedItemsCount }: DesktopNavProps) {
@@ -67,7 +67,7 @@ export function DesktopNav({ activeTab, onTabChange, selectedItemsCount }: Deskt
             
             <Icon
               size={18}
-              weight={isActive ? 'fill' : 'regular'}
+              weight={isActive ? 'bold' : 'regular'}
               className={cn(
                 'relative z-10 transition-transform duration-200',
                 !isActive && 'group-hover:scale-110'

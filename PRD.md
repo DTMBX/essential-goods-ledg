@@ -1,4 +1,4 @@
-# Essential Goods Ledger: Generational Economic Timeline
+# Chronos: Generational Economic Insights
 
 A cross-platform evidence-visualization tool that tracks everyday necessities and economic indicators across generations (1950-present), expressing costs in both dollars and "hours of work" to help Americans of all ages explore long-term price trends, wage growth, and volatility through transparent data—building shared understanding across generations rather than blame or division.
 
