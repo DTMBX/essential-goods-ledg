@@ -1,11 +1,83 @@
-export type ItemCategory = 'dairy' | 'meat' | 'fuel' | 'household'
+export type ItemCategory = 
+  | 'dairy' 
+  | 'meat' 
+  | 'produce' 
+  | 'grains' 
+  | 'staples'
+  | 'household' 
+  | 'fuel' 
+  | 'utilities'
+  | 'proteins'
+  | 'inputs'
+
+export type UnitStandard = 
+  | 'dozen' 
+  | 'gallon' 
+  | 'lb' 
+  | 'oz'
+  | 'kg'
+  | 'liter'
+  | 'count'
+  | 'pack'
+  | 'roll'
+  | 'kWh'
+  | 'therm'
+  | 'ccf'
+  | 'bushel'
+
+export interface UnitConversion {
+  fromUnit: UnitStandard
+  toUnit: UnitStandard
+  factor: number
+}
 
 export interface Item {
   id: string
   name: string
   category: ItemCategory
-  unit: string
+  unitStandard: UnitStandard
+  acceptableAlternateUnits: UnitStandard[]
+  conversions: UnitConversion[]
   description?: string
+  synonyms?: string[]
+  sourceSeriesIds: string[]
+  regionCoverage: string[]
+}
+
+export interface RawPricePoint {
+  id: string
+  itemId: string
+  date: string
+  region: string
+  value: number
+  unit: UnitStandard
+  sourceId: string
+  retrievalTimestamp: string
+  sourceUrl: string
+  rawPayload?: string
+  checksumHash?: string
+}
+
+export interface QAFlag {
+  type: 'schema-error' | 'unit-mismatch' | 'negative-value' | 'outlier' | 'sudden-jump' | 'duplicate' | 'missing-interval' | 'revision' | 'interpolated'
+  severity: 'error' | 'warning' | 'info'
+  message: string
+  detectedAt: string
+}
+
+export interface NormalizedPricePoint {
+  id: string
+  rawId: string
+  itemId: string
+  date: string
+  region: string
+  normalizedValue: number
+  normalizedUnit: UnitStandard
+  frequency: 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'annual'
+  aggregationMethod?: 'end-of-period' | 'mean' | 'median'
+  qaFlags: QAFlag[]
+  confidence: 'high' | 'medium' | 'low'
+  version: number
 }
 
 export interface PricePoint {
@@ -14,9 +86,14 @@ export interface PricePoint {
   date: string
   region: string
   nominalPrice: number
-  unit: string
+  unit: UnitStandard
   sourceId: string
   confidence: 'high' | 'medium' | 'low'
+  realPrice?: number
+  cpiValue?: number
+  qaFlags?: QAFlag[]
+  normalized?: NormalizedPricePoint
+  raw?: RawPricePoint
 }
 
 export interface WageSeries {
@@ -44,8 +121,56 @@ export interface Source {
   name: string
   provider: string
   license: string
+  terms: string
   url: string
   retrievalTimestamp: string
+  isOfficial: boolean
+  reliabilityTier: 'tier-1' | 'tier-2' | 'tier-3'
+  refreshSchedule: RefreshSchedule
+  coverageMap: Record<string, string[]>
+  seriesIdentifiers: string[]
+  status: 'active' | 'deprecated' | 'maintenance'
+  lastSuccessfulFetch?: string
+  lastError?: string
+}
+
+export interface DataConnector {
+  id: string
+  sourceId: string
+  name: string
+  enabled: boolean
+  featureFlag: string
+  retryConfig: {
+    maxRetries: number
+    backoffMs: number
+    circuitBreakerThreshold: number
+  }
+  rateLimit: {
+    requestsPerMinute: number
+    requestsPerHour: number
+  }
+  allowedDomains: string[]
+}
+
+export interface FetchSeriesRequest {
+  region: string
+  itemId: string
+  dateRange: {
+    start: string
+    end: string
+  }
+}
+
+export interface FetchSeriesResponse {
+  rawPoints: RawPricePoint[]
+  metadata: {
+    sourceId: string
+    fetchTimestamp: string
+    recordCount: number
+    coverage: number
+    errors: string[]
+    warnings: string[]
+  }
 }
 
 export interface Basket {
@@ -248,4 +373,92 @@ export interface EconomicLearningModule {
   }>
   relatedTerms: string[]
   visualAid?: string
+}
+
+export interface DataRevision {
+  id: string
+  sourceId: string
+  itemId: string
+  revisionDate: string
+  affectedDateRange: {
+    start: string
+    end: string
+  }
+  changes: Array<{
+    date: string
+    oldValue: number
+    newValue: number
+    reason?: string
+  }>
+  snapshotVersion: number
+  retrievalTimestamp: string
+}
+
+export interface ConfidenceScore {
+  seriesId: string
+  score: number
+  factors: {
+    coverage: number
+    recency: number
+    outlierRate: number
+    providerTier: number
+  }
+  computedAt: string
+}
+
+export interface SourceRegistry {
+  sources: Source[]
+  connectors: DataConnector[]
+  lastUpdated: string
+  version: string
+}
+
+export interface ValidationResult {
+  passed: boolean
+  errors: QAFlag[]
+  warnings: QAFlag[]
+  stats: {
+    totalPoints: number
+    validPoints: number
+    flaggedPoints: number
+    coverage: number
+  }
+}
+
+export interface NormalizationPipeline {
+  rawData: RawPricePoint[]
+  normalizedData: NormalizedPricePoint[]
+  validationResult: ValidationResult
+  processingTimestamp: string
+  version: number
+}
+
+export interface UserRole {
+  userId: string
+  role: 'anonymous' | 'registered' | 'analyst' | 'admin'
+  permissions: string[]
+  grantedAt: string
+}
+
+export interface AuditLog {
+  id: string
+  userId: string
+  action: string
+  resource: string
+  timestamp: string
+  metadata: Record<string, unknown>
+  ipAddress?: string
+}
+
+export interface BasketTemplate {
+  id: string
+  name: string
+  description: string
+  category: 'family-4' | 'single-adult' | 'tradesperson' | 'custom'
+  items: Array<{
+    itemId: string
+    quantity: number
+  }>
+  createdBy?: string
+  isPublic: boolean
 }

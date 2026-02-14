@@ -86,6 +86,67 @@ This is a sophisticated generational economics platform with long-run time-serie
 - **Progression**: Configure analytics (region, dates, metrics) → Click "Share Configuration" → View dialog with permalink URL → Copy to clipboard → Share URL → Recipient opens URL → Analytics view automatically loads with identical configuration → Alert indicates loaded from permalink
 - **Success criteria**: URL contains all configuration parameters base64-encoded; decoded configuration exactly matches original; shared links work indefinitely; configuration hash provides tamper-evidence; UI clearly indicates when viewing a permalink vs modifying locally; any modifications to permalink-loaded config create a new configuration state
 
+### Expanded Essentials Catalog (40+ Items)
+- **Functionality**: Comprehensive catalog system tracking 40+ essential goods across food staples, proteins, produce, grains, household items, utilities/energy, and agricultural inputs with full unit standardization, conversion rules, and region coverage metadata
+- **Purpose**: Provide comprehensive affordability analysis across all household necessities with traceable data provenance and unit consistency
+- **Trigger**: Navigate to "Expanded Catalog" from main navigation or search from any view
+- **Progression**: Browse by category → Search with synonyms → View item details (unit standards, alt units, coverage) → Mark favorites → Add to comparison basket → Select basket templates (Family of 4, Single Adult, Tradesperson)
+- **Success criteria**: 40+ items across categories; each item defines standard unit, acceptable alternates, and conversion factors; coverage and confidence shown per item/region; synonym search works (e.g., "hamburger" finds "ground beef"); basket templates populate comparison view; favorites persist across sessions
+
+#### Expanded Catalog Categories & Items:
+- **Dairy**: eggs, milk, butter, cheese
+- **Meat**: ground beef, beef steak, pork chops, bacon
+- **Proteins**: chicken breast, whole chicken, canned tuna, dried beans
+- **Produce**: apples, bananas, potatoes, onions, tomatoes, lettuce
+- **Grains**: rice, pasta
+- **Staples**: bread, flour, sugar, salt, coffee
+- **Household**: toilet paper, paper towels, laundry detergent, bar soap, diapers
+- **Fuel**: gasoline, diesel, propane, heating oil
+- **Utilities**: electricity (kWh), natural gas (therm/ccf), rent index
+- **Agricultural Inputs**: garden seeds, potting soil, fertilizer, animal feed
+
+### Data Connector Architecture & Pipeline
+- **Functionality**: Modular connector system per data source (USDA-AMS, USDA-NASS, EIA, BLS, FRED) with feature flags, circuit breakers, rate limiting, retry logic, and independent enable/disable controls
+- **Purpose**: Build resilient, auditable data ingestion that degrades gracefully on API outages while maintaining data integrity and security
+- **Trigger**: Background scheduled fetch jobs (hourly/daily per source) or user-initiated manual refresh from Sources view
+- **Progression**: Scheduler triggers connector → Connector checks if enabled/feature-flagged → Respects rate limits → Fetches raw data with retries/backoff → Validates schema → Stores raw immutable → Normalizes (unit conversion, frequency alignment, QA checks) → Computes confidence score → Updates UI with timestamps
+- **Success criteria**: Each connector independently disableable; circuit breaker trips after threshold failures; rate limits enforced per source; raw data preserved alongside normalized; validation flags (schema errors, negative prices, outliers, sudden jumps, duplicates) stored per point; connectors list allowed domains; all API keys server-side only
+
+### Normalization Pipeline & Validation
+- **Functionality**: Multi-stage pipeline storing raw data immutably, then creating normalized series with unit conversion, frequency alignment (daily/weekly/monthly), QA flagging (schema, unit, impossible values, outliers, gaps), and confidence scoring
+- **Purpose**: Ensure data accuracy, auditability, and traceability while surfacing data quality issues transparently
+- **Trigger**: Automatically after each connector fetch; viewable in Source Registry and Methodology views
+- **Progression**: Raw data ingested → Schema validation → Unit normalization (lb/oz/kg conversions) → Frequency alignment with selectable aggregation (end-of-period, mean, median) → Outlier detection (robust z-score) → Sudden jump detection → Duplicate removal → Missing interval detection → Confidence score computation (coverage × recency × outlier rate × provider tier) → Store raw + normalized side-by-side
+- **Success criteria**: Raw and normalized coexist for all series; every point has QA flags array; validation checks include negative prices, unit mismatches, statistical outliers (z-score > 3.5), duplicates; confidence shown as high/medium/low with factor breakdown; users can filter by confidence threshold; methodology documents all aggregation rules
+
+### Source Registry View
+- **Functionality**: Comprehensive registry displaying every data source with provider name, official status, reliability tier (1/2/3), license terms, series IDs, coverage map, refresh schedule, connector status, rate limits, last fetch timestamp, and errors
+- **Purpose**: Establish transparency and credibility by making all data provenance visible and auditable
+- **Trigger**: Navigate to "Source Registry" tab
+- **Progression**: View source list → See official badges, tier ratings, active status → Inspect license/terms → View covered items and regions → Check connector health (enabled, rate limits, retries) → Click through to official source URL → Review last fetch time and any errors
+- **Success criteria**: Every source shows provider, license, terms summary; official sources badged; reliability tiers visible (tier-1 = government primary data); coverage map shows regions per item; connector status shows enabled state, rate limits, circuit breaker config; links to official documentation work; error messages actionable; registry totals (sources, official count, items, active connectors) displayed
+
+### Unit Standards & Conversions
+- **Functionality**: Each item defines a standard unit ($/dozen, $/gallon, $/lb, $/kWh, etc.), acceptable alternate units, and explicit conversion factors stored as metadata
+- **Purpose**: Enable cross-source data integration and ensure price comparisons are unit-consistent
+- **Trigger**: Automatically during normalization pipeline when source data arrives in non-standard units
+- **Progression**: Raw data arrives with unit → Check against item's standard unit → If mismatch, look up conversion factor → Apply conversion → Store both raw and normalized values → Display standard unit in UI
+- **Success criteria**: Conversion factors defined for common pairs (lb↔oz, lb↔kg, gallon↔liter, therm↔kWh, etc.); normalization logs show conversion applied; UI always displays standard unit; raw data with original unit preserved; methodology documents conversion formulas
+
+### Confidence Scoring & Filtering
+- **Functionality**: Per-series confidence score (0-100) computed from coverage (data point density), recency (days since last update), outlier rate (% flagged points), and provider reliability tier (tier-1=100, tier-2=75, tier-3=50)
+- **Purpose**: Help users identify high-quality datasets and filter out low-confidence series
+- **Trigger**: Automatically computed after normalization; displayed in item cards, Source Registry, and chart config
+- **Progression**: Series normalized → Count valid points vs expected → Measure days since last update → Calculate outlier % → Look up provider tier → Compute weighted score (30% coverage + 20% recency + 30% outlier-free + 20% tier) → Display badge (high ≥80, medium 50-79, low <50) → Allow filtering in Explore view
+- **Success criteria**: Score updates with each data refresh; formula transparent in Methodology; users can filter items by confidence threshold; low-confidence series show warning badges; factor breakdown visible (coverage: X%, recency: Y%, etc.)
+
+### Basket Templates
+- **Functionality**: Pre-configured item baskets for common household types: "Family of 4" (2 adults + 2 children weekly essentials), "Single Adult", "Tradesperson (Fuel-Heavy)"
+- **Purpose**: Provide realistic starting points for affordability analysis and save users from manually selecting items
+- **Trigger**: Displayed in Expanded Catalog view; click "Add All to Comparison" button
+- **Progression**: User browses templates → Sees item list preview → Clicks "Add All" → All template items added to selection → Navigate to Compare view to see basket analysis
+- **Success criteria**: Templates show item count and preview; "Add All" button bulk-selects items; templates include realistic quantities (e.g., Family of 4: 2 dozen eggs/week, 3 gal milk, 20 gal gas); users can edit after adding; templates persist and can be favorited
+
 ### Data Source Refresh Management
 - **Functionality**: User-initiated and automated refresh of API data sources (USDA, EIA, BLS) with configurable schedules (hourly/daily/manual), status tracking, timestamps, and per-source or global refresh controls
 - **Purpose**: Empower users to keep data current through automatic scheduled updates or on-demand manual refreshes while maintaining full transparency about data freshness and retrieval status

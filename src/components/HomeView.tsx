@@ -157,7 +157,7 @@ export function HomeView({ wageConfig, onExplore, onCompare }: HomeViewProps) {
                         ${latest?.nominalPrice.toFixed(2)}
                       </span>
                       <span className="text-sm text-muted-foreground">
-                        /{item.unit}
+                        /{item.unitStandard}
                       </span>
                     </div>
                     <div className="text-sm text-muted-foreground font-mono">

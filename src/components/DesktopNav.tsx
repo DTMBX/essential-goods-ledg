@@ -22,6 +22,7 @@ interface DesktopNavProps {
 const navItems = [
   { id: 'home', label: 'Home', icon: HomeIcon },
   { id: 'explore', label: 'Explore', icon: ExploreIcon },
+  { id: 'expanded-catalog', label: 'Full Catalog', icon: ExploreIcon, highlight: true },
   { id: 'compare', label: 'Compare', icon: CompareIcon, badge: true },
   { id: 'analytics', label: 'Analytics', icon: AnalyticsIcon },
   { id: 'generations', label: 'Generations', icon: GenerationsIcon, highlight: true },
@@ -29,6 +30,7 @@ const navItems = [
   { id: 'learn', label: 'Learn', icon: EducationIcon, highlight: true },
   { id: 'methodology', label: 'Methodology', icon: MethodologyIcon },
   { id: 'sources', label: 'Sources', icon: DataSourceIcon },
+  { id: 'registry', label: 'Source Registry', icon: DataSourceIcon, highlight: true },
   { id: 'settings', label: 'Settings', icon: SettingsIcon },
 ]
 

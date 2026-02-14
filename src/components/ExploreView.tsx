@@ -112,7 +112,7 @@ export function ExploreView({ selectedItemIds, onToggleItem, hourlyWage }: Explo
                         ${latest.nominalPrice.toFixed(2)}
                       </span>
                       <span className="text-sm text-muted-foreground">
-                        /{item.unit}
+                        /{item.unitStandard}
                       </span>
                     </div>
                     <div className="text-sm text-muted-foreground font-mono">

@@ -9,10 +9,18 @@ Chronos is a cross-platform evidence-visualization tool that tracks everyday nec
 ## ✨ Key Features
 
 ### 📊 Core Analytics
-- **Basket Snapshot** - Track essential goods (eggs, milk, butter, cheese, beef, gasoline, propane)
+- **Expanded Catalog** - Track 40+ essential goods across 10 categories (food, household, energy, inputs)
+- **Basket Snapshot** - Monitor essential goods with customizable basket templates
 - **Hours of Work** - Convert prices into work-time for visceral affordability understanding
 - **CPI Integration** - Real vs nominal price analysis with inflation adjustment
 - **Multi-Series Charts** - Compare multiple items across time periods
+
+### 🏗️ Data Pipeline (New in v1.0)
+- **8 Official Sources** - USDA-AMS, USDA-NASS, EIA (3 connectors), BLS (2 connectors), FRED
+- **Robust Validation** - Schema checks, unit normalization, outlier detection, QA flagging
+- **Confidence Scoring** - Quality scores from coverage, recency, outlier rate, and provider tier
+- **Source Registry** - Complete transparency view with licensing, terms, and connector status
+- **Unit Standardization** - 14+ unit types with automatic conversion (lb↔oz↔kg, gallon↔liter, etc.)
 
 ### 🌐 Generational Insights
 - **Timeline Analysis** - Economic experiences from Silent Generation through Gen Z
@@ -23,14 +31,15 @@ Chronos is a cross-platform evidence-visualization tool that tracks everyday nec
 ### 🔬 Transparency & Methodology
 - **Formula Tooltips** - Every metric shows its calculation
 - **Source Citations** - Complete API provenance with retrieval timestamps
-- **Data Integrity** - Tamper-evident exports with versioned methodology
+- **Data Integrity** - Raw + normalized data side-by-side with checksums
 - **Narrative Guardrails** - "What the data shows / doesn't show" panels
 
 ### 🔄 Data Management
-- **Auto-Refresh** - Hourly or daily scheduled updates
-- **Manual Refresh** - On-demand data updates per source
-- **Source Tracking** - Last refresh timestamps and status monitoring
+- **Auto-Refresh** - Hourly or daily scheduled updates per source
+- **Manual Refresh** - On-demand data updates with real-time status
+- **Source Tracking** - Last refresh timestamps and connection monitoring
 - **Graceful Degradation** - Cached data available during source failures
+- **Circuit Breakers** - Auto-disable connectors after failure threshold
 
 ### 📤 Sharing & Export
 - **Shareable Permalinks** - Reproducible configurations with tamper-evident hashing
@@ -72,23 +81,38 @@ This is a Spark application built with:
 The app runs automatically in your Spark environment. Simply navigate between views:
 
 - **Home** - Dashboard overview with basket snapshot
-- **Explore** - Browse and search essential goods
+- **Explore** - Browse original 8-item catalog
+- **Full Catalog** (NEW) - Browse 40+ essentials with category filtering and search
 - **Compare** - Multi-series chart builder
-- **Analytics** - Wage vs essentials analysis
+- **Analytics** - Wage vs essentials analysis with permalinks
 - **Generations** - Cross-generational timeline
 - **Volatility** - Stability explorer
 - **Learn** - Economic literacy modules
 - **Methodology** - Formulas and data sources
 - **Sources** - API refresh management
+- **Source Registry** (NEW) - Complete data provenance and quality view
 - **Settings** - Wage configuration
 
 ### Key Documentation
 
-- [Product Requirements](./PRD.md) - Complete feature specifications
+#### Core Documentation
+- [Product Requirements](./PRD.md) - Complete feature specifications (updated for v1.0)
+- [Expanded Catalog Implementation](./EXPANDED_CATALOG_IMPLEMENTATION.md) - Architecture and acceptance criteria (NEW)
+- [Developer Guide](./DEVELOPER_GUIDE.md) - How to add items, sources, and connectors (NEW)
+- [Files Modified](./FILES_MODIFIED.md) - Change log for Iteration 15 (NEW)
+
+#### Design & Brand
 - [Brand Guidelines](./BRAND_GUIDELINES.md) - Logo, icons, typography, colors
+- [Visual Identity Bible](./VISUAL_IDENTITY_BIBLE.md) - Comprehensive design system
+
+#### Security & Privacy
+- [Security & RBAC Guide](./SECURITY_RBAC_GUIDE.md) - Auth, permissions, audit logging (NEW)
+- [Security Overview](./SECURITY.md) - Data integrity and privacy practices
+
+#### Feature Documentation
 - [Permalink Documentation](./PERMALINK_DOCUMENTATION.md) - Shareable configuration system
 - [Analytics Summary](./ANALYTICS_SUMMARY.md) - Wage vs essentials methodology
-- [Security](./SECURITY.md) - Data integrity and privacy practices
+- [Loading States](./LOADING_STATES.md) - Progressive loading patterns
 
 ---
 
@@ -118,18 +142,35 @@ Chronos is built on principles of:
 
 ---
 
-## 📊 Data Sources
+## 📊 Data Sources (v1.0 Expanded)
 
-- **USDA NASS** - Agricultural commodity prices
-- **EIA** - Energy prices (gasoline, propane)
-- **BLS** - Consumer Price Index, wage series
-- **Federal Reserve** - Historical economic indicators
+### Official Government Sources (8 Connectors)
+- **USDA-AMS** - Agricultural Marketing Service (dairy, proteins)
+- **USDA-NASS** - National Agricultural Statistics (produce, meat, inputs)
+- **EIA-Petroleum** - Energy Information Administration (gasoline, diesel, propane, heating oil)
+- **EIA-Natural Gas** - Natural gas pricing
+- **EIA-Electricity** - Residential electricity rates
+- **BLS-Wage** - Bureau of Labor Statistics wage data
+- **BLS-CPI** - Consumer Price Index
+- **FRED-Housing** - Federal Reserve rent indices
+
+### Coverage
+- **41 Items** across 10 categories
+- **Tier-1 Reliability** (all official government sources)
+- **Multiple Regions** (US-National, Midwest, Northeast, South, West where applicable)
 
 All sources displayed with:
-- Provider and license information
-- Last refresh timestamp
-- Connection status
+- Provider name and official status badge
+- License and usage terms
+- Series identifiers
+- Coverage map (regions × items)
+- Refresh schedule (hourly/daily)
+- Connector health status
+- Last successful fetch timestamp
+- Rate limits and circuit breaker configuration
 - Direct links to official documentation
+
+[View Source Registry →](/#registry)
 
 ---
 

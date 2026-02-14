@@ -4,6 +4,8 @@ import { useKV } from '@github/spark/hooks'
 import { AppHeader } from '@/components/AppHeader'
 import { HomeView } from '@/components/HomeView'
 import { ExploreView } from '@/components/ExploreView'
+import { ExpandedExploreView } from '@/components/ExpandedExploreView'
+import { SourceRegistryView } from '@/components/SourceRegistryView'
 import { CompareView } from '@/components/CompareView'
 import { SettingsView } from '@/components/SettingsView'
 import { MethodologyView } from '@/components/MethodologyView'
@@ -26,6 +28,10 @@ function App() {
       setActiveTab('analytics')
     } else if (hash === 'sources') {
       setActiveTab('sources')
+    } else if (hash === 'registry') {
+      setActiveTab('registry')
+    } else if (hash === 'expanded-catalog') {
+      setActiveTab('expanded-catalog')
     } else if (hash === 'generations') {
       setActiveTab('generations')
     } else if (hash === 'volatility') {
@@ -137,6 +143,18 @@ function App() {
 
         {activeTab === 'sources' && (
           <DataSourcesView />
+        )}
+
+        {activeTab === 'registry' && (
+          <SourceRegistryView />
+        )}
+
+        {activeTab === 'expanded-catalog' && (
+          <ExpandedExploreView
+            selectedItemIds={selectedItems || []}
+            onToggleItem={handleToggleItem}
+            onCompare={() => setActiveTab('compare')}
+          />
         )}
 
         {activeTab === 'icons' && (

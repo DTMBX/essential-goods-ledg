@@ -29,6 +29,7 @@ interface MobileNavProps {
 const navItems = [
   { id: 'home', label: 'Home', icon: HomeIcon, description: 'Dashboard overview' },
   { id: 'explore', label: 'Explore', icon: ExploreIcon, description: 'Browse essential goods' },
+  { id: 'expanded-catalog', label: 'Full Catalog', icon: ExploreIcon, description: '40+ tracked essentials', highlight: true },
   { id: 'compare', label: 'Compare', icon: CompareIcon, description: 'Chart builder', badge: true },
   { id: 'analytics', label: 'Analytics', icon: AnalyticsIcon, description: 'Wage vs essentials' },
   { id: 'generations', label: 'Generations', icon: GenerationsIcon, description: 'Cross-generational timeline', highlight: true },
@@ -36,6 +37,7 @@ const navItems = [
   { id: 'learn', label: 'Learn', icon: EducationIcon, description: 'Economic literacy', highlight: true },
   { id: 'methodology', label: 'Methodology', icon: MethodologyIcon, description: 'Formulas & sources' },
   { id: 'sources', label: 'Sources', icon: DataSourceIcon, description: 'API data refresh' },
+  { id: 'registry', label: 'Source Registry', icon: DataSourceIcon, description: 'Data provenance & quality', highlight: true },
   { id: 'settings', label: 'Settings', icon: SettingsIcon, description: 'Configure wage' },
 ]
 
