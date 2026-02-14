@@ -310,3 +310,18 @@ export function RemediationIcon({ size = 24, className = "", weight = 'regular' 
     </svg>
   )
 }
+
+export function TestIcon({ size = 24, className = "", weight = 'regular' }: IconProps) {
+  const sw = strokeWidths[weight]
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M9 2v3m6-3v3" stroke="currentColor" strokeWidth={sw} strokeLinecap="round" />
+      <path d="M7 5h10a1 1 0 0 1 1 1v12a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V6a1 1 0 0 1 1-1z" 
+        stroke="currentColor" strokeWidth={sw} strokeLinejoin="round" />
+      <path d="M6 10h12" stroke="currentColor" strokeWidth={sw} strokeLinecap="round" />
+      <circle cx="10" cy="15" r="1.5" fill="currentColor" opacity="0.6" />
+      <circle cx="14" cy="15" r="1.5" fill="currentColor" opacity="0.6" />
+      <path d="M10 18h4" stroke="currentColor" strokeWidth={sw} strokeLinecap="round" opacity="0.4" />
+    </svg>
+  )
+}

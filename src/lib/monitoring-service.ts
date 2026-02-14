@@ -345,6 +345,52 @@ class MonitoringService {
     this.simulateAPICall(connectorId)
   }
 
+  simulateAPIFailure(connectorId: string): void {
+    const connector = DATA_CONNECTORS.find((c) => c.id === connectorId)
+    if (!connector) return
+
+    const health = this.getHealthStatus(connectorId)
+    if (!health) return
+
+    for (let i = 0; i < 5; i++) {
+      const responseTime = 5000 + Math.random() * 5000
+
+      const log: APICallLog = {
+        id: `log-${Date.now()}-${Math.random()}`,
+        connectorId,
+        sourceId: connector.sourceId,
+        endpoint: `/api/data/${connector.sourceId}`,
+        method: 'GET',
+        timestamp: new Date(Date.now() - (4 - i) * 1000).toISOString(),
+        responseTimeMs: Math.round(responseTime),
+        statusCode: i % 2 === 0 ? 503 : 504,
+        success: false,
+        errorMessage: i % 2 === 0 ? 'Service unavailable' : 'Gateway timeout',
+        retryAttempt: i,
+      }
+
+      this.state.callLogs.unshift(log)
+    }
+
+    if (this.state.callLogs.length > 1000) {
+      this.state.callLogs = this.state.callLogs.slice(0, 1000)
+    }
+
+    health.consecutiveFailures = 5
+    health.errorCount24h += 5
+    health.requestCount24h += 5
+    health.lastFailedFetch = new Date().toISOString()
+    health.status = 'offline'
+    health.circuitBreakerStatus = 'open'
+    health.responseTimeMs = 7000
+
+    this.createAlert('critical', 'api-availability', connectorId, connector.sourceId, health.name)
+
+    this.state.lastUpdate = new Date().toISOString()
+    this.saveState()
+    this.notify()
+  }
+
   getQualityScorecard(sourceId: string, period: '24h' | '7d' | '30d' = '24h'): QualityScorecard {
     const health = this.state.healthStatuses.find((h) => h.sourceId === sourceId)
     if (!health) {

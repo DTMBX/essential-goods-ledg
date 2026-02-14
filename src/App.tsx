@@ -19,6 +19,7 @@ import { LoadingShowcase } from '@/components/LoadingStates'
 import { BrandShowcase } from '@/components/BrandShowcase'
 import { DataQualityMonitoringView } from '@/components/DataQualityMonitoringView'
 import { AutoRemediationView } from '@/components/AutoRemediationView'
+import { ConnectorTestSuite } from '@/components/ConnectorTestSuite'
 import type { UserWageConfig } from '@/lib/types'
 
 function App() {
@@ -50,6 +51,8 @@ function App() {
       setActiveTab('monitoring')
     } else if (hash === 'remediation') {
       setActiveTab('remediation')
+    } else if (hash === 'test-suite') {
+      setActiveTab('test-suite')
     }
   }, [])
   
@@ -181,6 +184,10 @@ function App() {
 
         {activeTab === 'remediation' && (
           <AutoRemediationView />
+        )}
+
+        {activeTab === 'test-suite' && (
+          <ConnectorTestSuite />
         )}
       </main>
 
