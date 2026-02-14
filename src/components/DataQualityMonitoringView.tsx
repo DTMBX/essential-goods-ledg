@@ -145,6 +145,14 @@ export function DataQualityMonitoringView() {
           <Button
             variant="outline"
             size="sm"
+            onClick={() => window.location.hash = 'remediation'}
+          >
+            <Gear className="mr-2" />
+            Auto-Remediation
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => setAutoRefreshEnabled(!autoRefreshEnabled)}
           >
             <Pulse className={cn('mr-2', autoRefreshEnabled && 'animate-pulse')} />

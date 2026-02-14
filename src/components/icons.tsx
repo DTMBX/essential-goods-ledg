@@ -297,3 +297,16 @@ export function CalendarIcon({ size = 24, className = "", weight = 'regular' }: 
     </svg>
   )
 }
+
+export function RemediationIcon({ size = 24, className = "", weight = 'regular' }: IconProps) {
+  const sw = strokeWidths[weight]
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M12 2v4m0 12v4M2 12h4m12 0h4" stroke="currentColor" strokeWidth={sw} strokeLinecap="round" />
+      <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth={sw} />
+      <path d="M16.24 7.76l-1.41 1.41M9.17 14.83l-1.41 1.41M7.76 7.76l1.41 1.41M14.83 14.83l1.41 1.41" 
+        stroke="currentColor" strokeWidth={sw} strokeLinecap="round" opacity="0.5" />
+      <path d="M12 8a4 4 0 0 1 0 8" stroke="currentColor" strokeWidth={sw + 0.5} strokeLinecap="round" opacity="0.3" />
+    </svg>
+  )
+}

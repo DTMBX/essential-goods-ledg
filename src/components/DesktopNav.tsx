@@ -11,7 +11,8 @@ import {
   MethodologyIcon,
   DataSourceIcon,
   SettingsIcon,
-  MonitoringIcon
+  MonitoringIcon,
+  RemediationIcon
 } from '@/components/icons'
 
 interface DesktopNavProps {
@@ -33,6 +34,7 @@ const navItems = [
   { id: 'sources', label: 'Sources', icon: DataSourceIcon },
   { id: 'registry', label: 'Source Registry', icon: DataSourceIcon, highlight: true },
   { id: 'monitoring', label: 'Data Quality', icon: MonitoringIcon, highlight: true },
+  { id: 'remediation', label: 'Auto-Remediation', icon: RemediationIcon, highlight: true },
   { id: 'settings', label: 'Settings', icon: SettingsIcon },
 ]
 

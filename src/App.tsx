@@ -18,6 +18,7 @@ import { IconShowcase } from '@/components/IconShowcase'
 import { LoadingShowcase } from '@/components/LoadingStates'
 import { BrandShowcase } from '@/components/BrandShowcase'
 import { DataQualityMonitoringView } from '@/components/DataQualityMonitoringView'
+import { AutoRemediationView } from '@/components/AutoRemediationView'
 import type { UserWageConfig } from '@/lib/types'
 
 function App() {
@@ -47,6 +48,8 @@ function App() {
       setActiveTab('brand')
     } else if (hash === 'monitoring') {
       setActiveTab('monitoring')
+    } else if (hash === 'remediation') {
+      setActiveTab('remediation')
     }
   }, [])
   
@@ -174,6 +177,10 @@ function App() {
 
         {activeTab === 'monitoring' && (
           <DataQualityMonitoringView />
+        )}
+
+        {activeTab === 'remediation' && (
+          <AutoRemediationView />
         )}
       </main>
 

@@ -16,7 +16,8 @@ import {
   MethodologyIcon,
   DataSourceIcon,
   SettingsIcon,
-  MonitoringIcon
+  MonitoringIcon,
+  RemediationIcon
 } from '@/components/icons'
 
 interface MobileNavProps {
@@ -40,6 +41,7 @@ const navItems = [
   { id: 'sources', label: 'Sources', icon: DataSourceIcon, description: 'API data refresh' },
   { id: 'registry', label: 'Source Registry', icon: DataSourceIcon, description: 'Data provenance & quality', highlight: true },
   { id: 'monitoring', label: 'Data Quality', icon: MonitoringIcon, description: 'Real-time API monitoring', highlight: true },
+  { id: 'remediation', label: 'Auto-Remediation', icon: RemediationIcon, description: 'Automated connector recovery', highlight: true },
   { id: 'settings', label: 'Settings', icon: SettingsIcon, description: 'Configure wage' },
 ]
 
