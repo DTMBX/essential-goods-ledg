@@ -1,0 +1,166 @@
+import { MetricCard } from '@/components/MetricCard'
+import { CategoryBadge } from '@/components/CategoryBadge'
+import { Card } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { 
+  ShoppingCart, 
+  Clock, 
+  TrendUp,
+  Info,
+  ChartLine
+} from '@phosphor-icons/react'
+import { ITEMS, getLatestPrice, calculateHoursOfWork, calculatePriceChange, getPriceHistory } from '@/lib/data'
+import type { UserWageConfig } from '@/lib/types'
+
+interface HomeViewProps {
+  wageConfig: UserWageConfig
+  onExplore: () => void
+  onCompare: (itemIds: string[]) => void
+}
+
+export function HomeView({ wageConfig, onExplore, onCompare }: HomeViewProps) {
+  const basketItems = ITEMS.slice(0, 8)
+  
+  const totalBasketCost = basketItems.reduce((sum, item) => {
+    const latest = getLatestPrice(item.id)
+    return sum + (latest?.nominalPrice || 0)
+  }, 0)
+
+  const totalHoursOfWork = calculateHoursOfWork(totalBasketCost, wageConfig.hourlyWage || 15)
+
+  const yearAgoDate = new Date()
+  yearAgoDate.setFullYear(yearAgoDate.getFullYear() - 1)
+  const yearAgoDateStr = yearAgoDate.toISOString().split('T')[0]
+
+  const yearAgoBasketCost = basketItems.reduce((sum, item) => {
+    const history = getPriceHistory(item.id)
+    const yearAgoPoint = history.find(p => p.date >= yearAgoDateStr)
+    return sum + (yearAgoPoint?.nominalPrice || 0)
+  }, 0)
+
+  const basketChange = calculatePriceChange(yearAgoBasketCost, totalBasketCost)
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold mb-2">Essential Goods Ledger</h1>
+        <p className="text-muted-foreground">
+          Track everyday necessities through evidence-driven price and affordability data
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <MetricCard
+          title="Current Basket Cost"
+          value={`$${totalBasketCost.toFixed(2)}`}
+          change={basketChange}
+          subtitle="8 essential items"
+          icon={<ShoppingCart size={24} />}
+        />
+        <MetricCard
+          title="Hours of Work"
+          value={totalHoursOfWork.toFixed(2)}
+          unit="hours"
+          subtitle={`@ $${wageConfig.hourlyWage?.toFixed(2)}/hr`}
+          icon={<Clock size={24} />}
+        />
+        <MetricCard
+          title="Year-Over-Year Change"
+          value={`${basketChange > 0 ? '+' : ''}${basketChange.toFixed(1)}%`}
+          subtitle="Past 12 months"
+          icon={<TrendUp size={24} />}
+        />
+      </div>
+
+      <Card className="p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="text-xl font-semibold mb-1">Essential Basket</h2>
+            <p className="text-sm text-muted-foreground">
+              Curated set of everyday necessities tracked over time
+            </p>
+          </div>
+          <Button onClick={() => onCompare(basketItems.map(i => i.id))}>
+            <ChartLine size={16} className="mr-2" />
+            Compare All
+          </Button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {basketItems.map(item => {
+            const latest = getLatestPrice(item.id)
+            const history = getPriceHistory(item.id)
+            const yearAgoPoint = history.find(p => p.date >= yearAgoDateStr)
+            
+            const change = latest && yearAgoPoint 
+              ? calculatePriceChange(yearAgoPoint.nominalPrice, latest.nominalPrice)
+              : 0
+
+            const hoursOfWork = latest 
+              ? calculateHoursOfWork(latest.nominalPrice, wageConfig.hourlyWage || 15)
+              : 0
+
+            return (
+              <Card 
+                key={item.id} 
+                className="p-4 hover:shadow-md transition-shadow cursor-pointer"
+                onClick={() => onCompare([item.id])}
+              >
+                <div className="space-y-3">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h3 className="font-semibold mb-1">{item.name}</h3>
+                      <CategoryBadge category={item.category} />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-2xl font-bold font-mono">
+                        ${latest?.nominalPrice.toFixed(2)}
+                      </span>
+                      <span className="text-sm text-muted-foreground">
+                        /{item.unit}
+                      </span>
+                    </div>
+                    <div className="text-sm text-muted-foreground font-mono">
+                      {hoursOfWork.toFixed(2)} hours of work
+                    </div>
+                  </div>
+
+                  {change !== 0 && (
+                    <Badge 
+                      variant="secondary"
+                      className={
+                        change > 0 
+                          ? 'bg-[var(--decrease)] text-white' 
+                          : 'bg-[var(--increase)] text-white'
+                      }
+                    >
+                      {change > 0 ? '+' : ''}{change.toFixed(1)}% YoY
+                    </Badge>
+                  )}
+                </div>
+              </Card>
+            )
+          })}
+        </div>
+      </Card>
+
+      <Card className="p-6 bg-muted/50 border-accent/30">
+        <div className="flex items-start gap-3">
+          <Info size={24} className="text-accent flex-shrink-0 mt-1" />
+          <div className="space-y-2">
+            <h3 className="font-semibold">Evidence-First Methodology</h3>
+            <p className="text-sm text-muted-foreground">
+              All prices sourced from USDA Agricultural Marketing Service and U.S. Energy Information Administration. 
+              Hours-of-work calculated as: (price × quantity) ÷ hourly wage. 
+              View complete methodology and data sources in the Methodology tab.
+            </p>
+          </div>
+        </div>
+      </Card>
+    </div>
+  )
+}
