@@ -1,4 +1,4 @@
-import type { Item, PricePoint, WageSeries, Source } from './types'
+import type { Item, PricePoint, WageSeries, Source, CPIDataPoint } from './types'
 
 export const SOURCES: Source[] = [
   {
@@ -19,10 +19,18 @@ export const SOURCES: Source[] = [
   },
   {
     id: 'bls-1',
-    name: 'Bureau of Labor Statistics',
+    name: 'Bureau of Labor Statistics - Wage Data',
     provider: 'U.S. Department of Labor',
     license: 'Public Domain',
     url: 'https://www.bls.gov/',
+    retrievalTimestamp: new Date().toISOString()
+  },
+  {
+    id: 'bls-cpi',
+    name: 'Bureau of Labor Statistics - Consumer Price Index',
+    provider: 'U.S. Department of Labor',
+    license: 'Public Domain',
+    url: 'https://www.bls.gov/cpi/',
     retrievalTimestamp: new Date().toISOString()
   }
 ]
@@ -168,6 +176,54 @@ export const WAGE_DATA: WageSeries[] = [
   ...generateWageHistory('median', 19.50, 0.002)
 ]
 
+function generateCPIHistory(baseValue: number, baseYear: number, avgInflation: number): CPIDataPoint[] {
+  const points: CPIDataPoint[] = []
+  const startDate = new Date('2014-01-01')
+  const endDate = new Date('2024-12-01')
+  
+  let date = new Date(startDate)
+  const startYear = date.getFullYear()
+  const yearDiff = startYear - baseYear
+  
+  let currentValue = baseValue * Math.pow(1 + avgInflation, yearDiff)
+  
+  while (date <= endDate) {
+    const monthlyInflation = avgInflation / 12
+    const seasonalVariation = (Math.random() - 0.5) * 0.001
+    currentValue = currentValue * (1 + monthlyInflation + seasonalVariation)
+    
+    points.push({
+      id: `cpi-${date.toISOString()}`,
+      date: date.toISOString().split('T')[0],
+      region: 'US-National',
+      value: Math.round(currentValue * 1000) / 1000,
+      baseYear: baseYear,
+      sourceId: 'bls-cpi'
+    })
+    
+    date = new Date(date.setMonth(date.getMonth() + 1))
+  }
+  
+  return points
+}
+
+export const CPI_DATA: CPIDataPoint[] = generateCPIHistory(100, 1982, 0.025)
+
+export function getCPIHistory(region: string = 'US-National'): CPIDataPoint[] {
+  return CPI_DATA.filter(c => c.region === region)
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+}
+
+export function getCPIForDate(date: string, region: string = 'US-National'): CPIDataPoint | undefined {
+  const history = getCPIHistory(region)
+  return history.find(c => c.date === date) || history[history.length - 1]
+}
+
+export function getLatestCPI(region: string = 'US-National'): CPIDataPoint | undefined {
+  const history = getCPIHistory(region)
+  return history[history.length - 1]
+}
+
 export function getItemById(id: string): Item | undefined {
   return ITEMS.find(item => item.id === id)
 }
@@ -198,4 +254,30 @@ export function calculateHoursOfWork(price: number, hourlyWage: number): number 
 
 export function calculatePriceChange(oldPrice: number, newPrice: number): number {
   return Math.round(((newPrice - oldPrice) / oldPrice) * 10000) / 100
+}
+
+export function calculateRealPrice(nominalPrice: number, cpiValue: number, baseYear: number = 1982): number {
+  const baseCPI = 100
+  const adjustedPrice = (nominalPrice / cpiValue) * baseCPI
+  return Math.round(adjustedPrice * 100) / 100
+}
+
+export function calculateInflationRate(oldCPI: number, newCPI: number): number {
+  return Math.round(((newCPI - oldCPI) / oldCPI) * 10000) / 100
+}
+
+export function getPriceWithCPI(itemId: string, region: string = 'US-National'): Array<PricePoint & { realPrice: number, cpiValue: number }> {
+  const priceHistory = getPriceHistory(itemId, region)
+  const cpiHistory = getCPIHistory(region)
+  
+  return priceHistory.map(price => {
+    const cpi = cpiHistory.find(c => c.date === price.date) || cpiHistory[cpiHistory.length - 1]
+    const realPrice = calculateRealPrice(price.nominalPrice, cpi.value)
+    
+    return {
+      ...price,
+      realPrice,
+      cpiValue: cpi.value
+    }
+  })
 }

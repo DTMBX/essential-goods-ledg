@@ -28,6 +28,15 @@ export interface WageSeries {
   sourceId?: string
 }
 
+export interface CPIDataPoint {
+  id: string
+  date: string
+  region: string
+  value: number
+  baseYear: number
+  sourceId: string
+}
+
 export interface Source {
   id: string
   name: string

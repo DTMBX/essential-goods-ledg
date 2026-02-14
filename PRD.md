@@ -27,11 +27,18 @@ This is a data-intensive application with sophisticated time-series visualizatio
 - **Success criteria**: Search returns results in <500ms, categories are logically organized, units are clearly displayed, and users can add items to comparisons with one click
 
 ### Compare - Multi-Series Chart Builder
-- **Functionality**: Interactive chart builder supporting multiple items, date ranges, and metric modes (nominal $, real $, hours-of-work)
-- **Purpose**: Core analytical tool for comparing affordability across goods and time periods
+- **Functionality**: Interactive chart builder supporting multiple items, date ranges, and metric modes (nominal $, CPI-adjusted real $, hours-of-work)
+- **Purpose**: Core analytical tool for comparing affordability across goods and time periods with inflation-adjusted purchasing power analysis
 - **Trigger**: User selects "Compare" or adds items from Explore
-- **Progression**: Select items → Choose date range → Pick metric mode → View chart → Adjust scale/zoom → Export or save configuration
-- **Success criteria**: Charts render smoothly with 10+ years of data, metric switching is instant, formula tooltips explain calculations, and exports include complete source metadata
+- **Progression**: Select items → Choose date range → Pick metric mode (nominal/real/hours) → View chart → Adjust scale/zoom → Export or save configuration
+- **Success criteria**: Charts render smoothly with 10+ years of data, metric switching is instant (including CPI calculations), formula tooltips explain calculations, and exports include complete source metadata including CPI values
+
+### CPI Integration & Real Price Calculation
+- **Functionality**: Automatic inflation adjustment using Bureau of Labor Statistics Consumer Price Index data (base year 1982-84 = 100)
+- **Purpose**: Enables users to separate item-specific price changes from general inflation effects
+- **Trigger**: User selects "Real ($, CPI-adj)" metric mode in comparison view
+- **Progression**: Select real price mode → System retrieves CPI data for date range → Calculates (nominal_price ÷ CPI_value) × 100 for each data point → Charts display inflation-adjusted prices → Tooltips show both nominal and real values
+- **Success criteria**: CPI calculations are accurate and traceable to BLS source, chart axes clearly indicate "1982-84 dollars", methodology documentation explains adjustment formula, and exports include both nominal and real values with CPI series data
 
 ### Wage Configuration
 - **Functionality**: Set hourly wage from user input or select from sourced series (minimum wage, median earnings, sector wages)

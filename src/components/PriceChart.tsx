@@ -6,7 +6,7 @@ interface PriceChartProps {
   data: Array<{
     itemId: string
     itemName: string
-    points: PricePoint[]
+    points: Array<PricePoint & { realPrice?: number, cpiValue?: number }>
     color: string
   }>
   metricMode?: 'nominal' | 'real' | 'hours-of-work'
@@ -51,9 +51,12 @@ export function PriceChart({ data, metricMode = 'nominal', hourlyWage = 15 }: Pr
       .domain(xExtent)
       .range([0, width])
 
-    const getYValue = (point: PricePoint) => {
+    const getYValue = (point: PricePoint & { realPrice?: number }) => {
       if (metricMode === 'hours-of-work') {
         return point.nominalPrice / hourlyWage
+      }
+      if (metricMode === 'real' && point.realPrice) {
+        return point.realPrice
       }
       return point.nominalPrice
     }
@@ -77,7 +80,13 @@ export function PriceChart({ data, metricMode = 'nominal', hourlyWage = 15 }: Pr
       .style('font-family', 'var(--font-mono)')
       .style('font-size', '12px')
 
-    const yLabel = metricMode === 'hours-of-work' ? 'Hours of Work' : 'Price ($)'
+    let yLabel = 'Price ($)'
+    if (metricMode === 'hours-of-work') {
+      yLabel = 'Hours of Work'
+    } else if (metricMode === 'real') {
+      yLabel = 'Inflation-Adjusted Price (1982 $)'
+    }
+    
     g.append('text')
       .attr('transform', 'rotate(-90)')
       .attr('y', 0 - margin.left)
@@ -89,7 +98,7 @@ export function PriceChart({ data, metricMode = 'nominal', hourlyWage = 15 }: Pr
       .style('fill', 'var(--foreground)')
       .text(yLabel)
 
-    const line = d3.line<PricePoint>()
+    const line = d3.line<PricePoint & { realPrice?: number }>()
       .x(d => x(new Date(d.date)))
       .y(d => y(getYValue(d)))
 

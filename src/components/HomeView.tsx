@@ -8,9 +8,10 @@ import {
   Clock, 
   TrendUp,
   Info,
-  ChartLine
+  ChartLine,
+  Percent
 } from '@phosphor-icons/react'
-import { ITEMS, getLatestPrice, calculateHoursOfWork, calculatePriceChange, getPriceHistory } from '@/lib/data'
+import { ITEMS, getLatestPrice, calculateHoursOfWork, calculatePriceChange, getPriceHistory, getCPIHistory, calculateInflationRate } from '@/lib/data'
 import type { UserWageConfig } from '@/lib/types'
 
 interface HomeViewProps {
@@ -41,6 +42,11 @@ export function HomeView({ wageConfig, onExplore, onCompare }: HomeViewProps) {
 
   const basketChange = calculatePriceChange(yearAgoBasketCost, totalBasketCost)
 
+  const cpiHistory = getCPIHistory()
+  const latestCPI = cpiHistory[cpiHistory.length - 1]
+  const yearAgoCPI = cpiHistory.find(c => c.date >= yearAgoDateStr)
+  const inflationRate = yearAgoCPI ? calculateInflationRate(yearAgoCPI.value, latestCPI.value) : 0
+
   return (
     <div className="space-y-6">
       <div>
@@ -50,7 +56,7 @@ export function HomeView({ wageConfig, onExplore, onCompare }: HomeViewProps) {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <MetricCard
           title="Current Basket Cost"
           value={`$${totalBasketCost.toFixed(2)}`}
@@ -66,9 +72,15 @@ export function HomeView({ wageConfig, onExplore, onCompare }: HomeViewProps) {
           icon={<Clock size={24} />}
         />
         <MetricCard
-          title="Year-Over-Year Change"
-          value={`${basketChange > 0 ? '+' : ''}${basketChange.toFixed(1)}%`}
+          title="Inflation Rate (CPI)"
+          value={`${inflationRate > 0 ? '+' : ''}${inflationRate.toFixed(1)}%`}
           subtitle="Past 12 months"
+          icon={<Percent size={24} />}
+        />
+        <MetricCard
+          title="Basket Change"
+          value={`${basketChange > 0 ? '+' : ''}${basketChange.toFixed(1)}%`}
+          subtitle="vs. general inflation"
           icon={<TrendUp size={24} />}
         />
       </div>
@@ -155,7 +167,9 @@ export function HomeView({ wageConfig, onExplore, onCompare }: HomeViewProps) {
             <h3 className="font-semibold">Evidence-First Methodology</h3>
             <p className="text-sm text-muted-foreground">
               All prices sourced from USDA Agricultural Marketing Service and U.S. Energy Information Administration. 
-              Hours-of-work calculated as: (price × quantity) ÷ hourly wage. 
+              Consumer Price Index (CPI) data from Bureau of Labor Statistics (base year 1982-84 = 100). 
+              Hours-of-work calculated as: price ÷ hourly wage. 
+              Real prices calculated as: (nominal price ÷ CPI) × 100.
               View complete methodology and data sources in the Methodology tab.
             </p>
           </div>

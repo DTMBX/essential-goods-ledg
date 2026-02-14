@@ -66,15 +66,40 @@ export function MethodologyView() {
             <AccordionContent>
               <div className="space-y-3">
                 <div className="bg-muted p-3 rounded font-mono text-sm">
-                  real_price = nominal_price ÷ (CPI_index / 100)
+                  real_price = (nominal_price ÷ CPI_value) × 100
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Adjusts historical prices to a common baseline using the Consumer Price Index, 
-                  removing the effect of general inflation to show "real" purchasing power changes.
+                  Adjusts historical prices to a common baseline (1982-84 = 100) using the Consumer 
+                  Price Index from the Bureau of Labor Statistics. This removes the effect of general 
+                  inflation to show "real" purchasing power changes over time.
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  <span className="font-medium text-foreground">Note:</span> CPI adjustment is 
-                  currently simulated in this demo. Full implementation requires CPI time-series data.
+                  <span className="font-medium text-foreground">Example:</span> If milk costs $4.50 
+                  today and the CPI is 300, the real price is ($4.50 ÷ 300) × 100 = $1.50 in 1982-84 dollars.
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  <span className="font-medium text-foreground">Limitations:</span> CPI measures 
+                  general inflation across all consumer goods. Individual item price changes may 
+                  differ significantly from overall inflation rates.
+                </p>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="inflation">
+            <AccordionTrigger>Inflation Rate</AccordionTrigger>
+            <AccordionContent>
+              <div className="space-y-3">
+                <div className="bg-muted p-3 rounded font-mono text-sm">
+                  inflation_rate = ((new_CPI - old_CPI) / old_CPI) × 100
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Measures the percentage change in the Consumer Price Index between two time periods, 
+                  indicating the rate of general price increases across the economy.
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  <span className="font-medium text-foreground">Note:</span> This is distinct from 
+                  individual item price changes, which can vary significantly from the overall inflation rate.
                 </p>
               </div>
             </AccordionContent>

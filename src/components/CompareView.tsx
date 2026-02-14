@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { PriceChart } from '@/components/PriceChart'
 import { X, Export, Info } from '@phosphor-icons/react'
-import { ITEMS, getItemById, getPriceHistory } from '@/lib/data'
+import { ITEMS, getItemById, getPriceWithCPI } from '@/lib/data'
 import type { MetricMode } from '@/lib/types'
 import { toast } from 'sonner'
 
@@ -44,7 +44,7 @@ export function CompareView({ selectedItemIds, onRemoveItem, hourlyWage }: Compa
 
   const chartData = selectedItemIds.map((itemId, index) => {
     const item = getItemById(itemId)
-    const history = getPriceHistory(itemId)
+    const history = getPriceWithCPI(itemId)
     const filterDate = getDateRangeFilter()
     
     return {
@@ -65,10 +65,10 @@ export function CompareView({ selectedItemIds, onRemoveItem, hourlyWage }: Compa
       items: selectedItemIds.map(id => ({
         id,
         name: getItemById(id)?.name,
-        data: getPriceHistory(id)
+        data: getPriceWithCPI(id)
       })),
-      methodology: 'Hours of work calculated as: (price × quantity) ÷ hourly wage',
-      sources: 'USDA AMS, EIA',
+      methodology: 'Hours of work calculated as: (price × quantity) ÷ hourly wage. Real prices calculated using CPI (base year 1982-84=100).',
+      sources: 'USDA AMS, EIA, BLS CPI',
       hash: btoa(timestamp).slice(0, 16)
     }
 
@@ -178,6 +178,14 @@ export function CompareView({ selectedItemIds, onRemoveItem, hourlyWage }: Compa
                   </p>
                 </Card>
               )}
+
+              {metricMode === 'real' && (
+                <Card className="p-3 bg-primary/10 border-primary/30">
+                  <p className="text-sm">
+                    <span className="font-medium">CPI-Adjusted:</span> Prices adjusted to 1982-84 dollars using BLS Consumer Price Index
+                  </p>
+                </Card>
+              )}
             </div>
           </Card>
 
@@ -200,13 +208,25 @@ export function CompareView({ selectedItemIds, onRemoveItem, hourlyWage }: Compa
           <Card className="p-4 bg-muted/50">
             <div className="flex items-start gap-2">
               <Info size={20} className="text-muted-foreground flex-shrink-0 mt-0.5" />
-              <div className="text-sm text-muted-foreground">
-                <p className="font-medium mb-1">Formula Reference:</p>
-                <ul className="space-y-1 font-mono text-xs">
-                  <li>Nominal Price: Direct price in current dollars</li>
-                  <li>Hours of Work: (Price × Quantity) ÷ Hourly Wage</li>
-                  <li>Real Price: Nominal Price ÷ CPI Index (when available)</li>
-                </ul>
+              <div className="text-sm text-muted-foreground space-y-2">
+                <div>
+                  <p className="font-medium mb-1">Formula Reference:</p>
+                  <ul className="space-y-1 font-mono text-xs">
+                    <li>Nominal Price: Direct price in current dollars</li>
+                    <li>Real Price: (Nominal Price ÷ CPI) × 100 (Base: 1982-84)</li>
+                    <li>Hours of Work: Price ÷ Hourly Wage</li>
+                  </ul>
+                </div>
+                {metricMode === 'real' && (
+                  <div className="pt-2 border-t border-border">
+                    <p className="text-xs">
+                      <span className="font-medium text-foreground">About CPI Adjustment:</span> Real prices 
+                      show purchasing power by removing general inflation effects. When an item's real price 
+                      increases, it's becoming more expensive relative to the overall economy. When it decreases, 
+                      it's becoming more affordable relative to average price levels.
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </Card>
