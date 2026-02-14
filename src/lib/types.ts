@@ -143,3 +143,109 @@ export interface SourceRefreshSchedule {
   schedule: RefreshSchedule
   enabled: boolean
 }
+
+export type Generation = 'silent' | 'boomer' | 'genx' | 'millennial' | 'genz'
+
+export interface GenerationDefinition {
+  id: Generation
+  name: string
+  birthYearStart: number
+  birthYearEnd: number
+  description: string
+  color: string
+}
+
+export interface VolatilityMetrics {
+  date: string
+  value: number
+  volatilityWindow: 3 | 5 | 10
+  metric: 'price' | 'wage' | 'basket' | 'cpi'
+  itemId?: string
+}
+
+export interface EconomicEvent {
+  id: string
+  name: string
+  date: string
+  endDate?: string
+  type: 'recession' | 'policy' | 'shock' | 'crisis' | 'other'
+  description: string
+  citation: string
+  citationUrl: string
+  source: string
+}
+
+export interface AffordabilityByAge {
+  generation: Generation
+  birthYear: number
+  age: number
+  calendarYear: number
+  basketHours: number
+  wage: number
+  basketCost: number
+  interpolated: boolean
+}
+
+export interface DialoguePrompt {
+  id: string
+  category: 'affordability' | 'volatility' | 'wages' | 'general'
+  question: string
+  context: string
+  relatedChartIds: string[]
+  educatorNotes?: string
+}
+
+export interface DataGuardrails {
+  chartId: string
+  whatDataShows: string[]
+  whatDataDoesNotShow: string[]
+  assumptions: string[]
+  limitations: string[]
+  interpretivePerspectives?: Array<{
+    label: string
+    content: string
+    isOpinion: boolean
+  }>
+}
+
+export interface VolatilityConfig {
+  enabled: boolean
+  window: 3 | 5 | 10
+  showBands: boolean
+  smoothingMethod: 'none' | 'moving-average' | 'exponential'
+}
+
+export interface GenerationalConfig {
+  selectedGenerations: Generation[]
+  compareMode: 'timeline' | 'life-stage' | 'calendar-year'
+  lifeStages: number[]
+  showVolatility: boolean
+  showEvents: boolean
+}
+
+export interface DecadeComparison {
+  decade: string
+  startYear: number
+  endYear: number
+  medianWage: number
+  basketCost: number
+  basketHours: number
+  cpiAverage: number
+  volatilityAverage: number
+  coverage: number
+}
+
+export interface EconomicLearningModule {
+  id: string
+  title: string
+  category: 'cycles' | 'inflation' | 'monetary-policy' | 'supply-shocks' | 'media'
+  content: string
+  readingLevel: number
+  citations: Array<{
+    text: string
+    url: string
+    source: string
+  }>
+  relatedTerms: string[]
+  visualAid?: string
+}

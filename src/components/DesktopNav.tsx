@@ -1,5 +1,16 @@
 import { motion } from 'framer-motion'
-import { House, MagnifyingGlass, ChartLine, ChartLineUp, BookOpen, Database, Gear } from '@phosphor-icons/react'
+import { 
+  House, 
+  MagnifyingGlass, 
+  ChartLine, 
+  ChartLineUp, 
+  Users, 
+  Waves, 
+  GraduationCap, 
+  BookOpen, 
+  Database, 
+  Gear 
+} from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 
 interface DesktopNavProps {
@@ -13,6 +24,9 @@ const navItems = [
   { id: 'explore', label: 'Explore', icon: MagnifyingGlass },
   { id: 'compare', label: 'Compare', icon: ChartLine, badge: true },
   { id: 'analytics', label: 'Analytics', icon: ChartLineUp },
+  { id: 'generations', label: 'Generations', icon: Users, highlight: true },
+  { id: 'volatility', label: 'Volatility', icon: Waves, highlight: true },
+  { id: 'learn', label: 'Learn', icon: GraduationCap, highlight: true },
   { id: 'methodology', label: 'Methodology', icon: BookOpen },
   { id: 'sources', label: 'Sources', icon: Database },
   { id: 'settings', label: 'Settings', icon: Gear },
@@ -33,13 +47,19 @@ export function DesktopNav({ activeTab, onTabChange, selectedItemsCount }: Deskt
             className={cn(
               'relative px-4 py-2 rounded-lg flex items-center gap-2 transition-all duration-200 group',
               'hover:bg-muted/60',
-              isActive ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+              isActive ? 'text-primary' : 'text-muted-foreground hover:text-foreground',
+              item.highlight && !isActive && 'hover:text-accent'
             )}
           >
             {isActive && (
               <motion.div
                 layoutId="desktop-active-indicator"
-                className="absolute inset-0 bg-primary/10 border-2 border-primary/20 rounded-lg"
+                className={cn(
+                  "absolute inset-0 rounded-lg",
+                  item.highlight 
+                    ? "bg-accent/10 border-2 border-accent/30"
+                    : "bg-primary/10 border-2 border-primary/20"
+                )}
                 initial={false}
                 transition={{ type: 'spring', damping: 30, stiffness: 400 }}
               />

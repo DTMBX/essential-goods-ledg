@@ -47,7 +47,7 @@ export function AppHeader({ activeTab, onTabChange, selectedItemsCount }: AppHea
                     Essential Goods Ledger
                   </h1>
                   <p className="text-xs text-muted-foreground leading-tight hidden lg:block">
-                    Evidence-driven affordability analysis
+                    Generational Economic Timeline
                   </p>
                 </div>
               </button>

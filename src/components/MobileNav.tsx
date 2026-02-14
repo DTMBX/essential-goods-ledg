@@ -1,7 +1,20 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, House, MagnifyingGlass, ChartLine, ChartLineUp, BookOpen, Database, Gear } from '@phosphor-icons/react'
+import { 
+  X, 
+  House, 
+  MagnifyingGlass, 
+  ChartLine, 
+  ChartLineUp, 
+  Users, 
+  Waves, 
+  GraduationCap, 
+  BookOpen, 
+  Database, 
+  Gear 
+} from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 
 interface MobileNavProps {
@@ -17,6 +30,9 @@ const navItems = [
   { id: 'explore', label: 'Explore', icon: MagnifyingGlass, description: 'Browse essential goods' },
   { id: 'compare', label: 'Compare', icon: ChartLine, description: 'Chart builder', badge: true },
   { id: 'analytics', label: 'Analytics', icon: ChartLineUp, description: 'Wage vs essentials' },
+  { id: 'generations', label: 'Generations', icon: Users, description: 'Cross-generational timeline', highlight: true },
+  { id: 'volatility', label: 'Volatility', icon: Waves, description: 'Stability explorer', highlight: true },
+  { id: 'learn', label: 'Learn', icon: GraduationCap, description: 'Economic literacy', highlight: true },
   { id: 'methodology', label: 'Methodology', icon: BookOpen, description: 'Formulas & sources' },
   { id: 'sources', label: 'Sources', icon: Database, description: 'API data refresh' },
   { id: 'settings', label: 'Settings', icon: Gear, description: 'Configure wage' },
@@ -96,7 +112,9 @@ export function MobileNav({ isOpen, onClose, activeTab, onTabChange, selectedIte
                         onClick={() => handleNavClick(item.id)}
                         className={cn(
                           'w-full flex items-center gap-4 px-4 py-3.5 rounded-lg transition-all duration-200 group relative overflow-hidden',
-                          isActive
+                          isActive && item.highlight
+                            ? 'bg-accent text-accent-foreground shadow-sm'
+                            : isActive
                             ? 'bg-primary text-primary-foreground shadow-sm'
                             : 'text-foreground hover:bg-muted hover:text-foreground'
                         )}
@@ -104,7 +122,10 @@ export function MobileNav({ isOpen, onClose, activeTab, onTabChange, selectedIte
                         {isActive && (
                           <motion.div
                             layoutId="mobile-active-bg"
-                            className="absolute inset-0 bg-primary rounded-lg"
+                            className={cn(
+                              "absolute inset-0 rounded-lg",
+                              item.highlight ? "bg-accent" : "bg-primary"
+                            )}
                             initial={false}
                             transition={{ type: 'spring', damping: 30, stiffness: 400 }}
                           />
@@ -122,6 +143,11 @@ export function MobileNav({ isOpen, onClose, activeTab, onTabChange, selectedIte
                           <div className="flex-1 text-left">
                             <div className="flex items-center gap-2">
                               <span className="font-medium text-[15px]">{item.label}</span>
+                              {item.highlight && !isActive && (
+                                <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4">
+                                  NEW
+                                </Badge>
+                              )}
                               {showBadge && (
                                 <span className={cn(
                                   'px-2 py-0.5 rounded-full text-xs font-mono font-semibold',
@@ -150,8 +176,8 @@ export function MobileNav({ isOpen, onClose, activeTab, onTabChange, selectedIte
 
             <div className="p-4 border-t border-border bg-muted/30">
               <div className="text-xs text-muted-foreground text-center space-y-1">
-                <p className="font-medium">Evidence-driven affordability analysis</p>
-                <p>Track essentials in dollars & hours of work</p>
+                <p className="font-medium">Generational Economic Timeline</p>
+                <p>Build understanding through transparent data</p>
               </div>
             </div>
           </motion.div>

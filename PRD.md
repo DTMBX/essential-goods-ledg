@@ -1,14 +1,16 @@
-# Essential Goods Ledger
+# Essential Goods Ledger: Generational Economic Timeline
 
-A cross-platform evidence-visualization tool that tracks everyday necessities over time and expresses cost in both dollars and "hours of work," helping users understand affordability shifts and inflation dynamics through transparent, defensible data.
+A cross-platform evidence-visualization tool that tracks everyday necessities and economic indicators across generations (1950-present), expressing costs in both dollars and "hours of work" to help Americans of all ages explore long-term price trends, wage growth, and volatility through transparent data—building shared understanding across generations rather than blame or division.
 
 **Experience Qualities**:
-1. **Transparent**: Every number traces back to its source with timestamps and formulas exposed, building trust through radical openness
-2. **Empowering**: Users discover affordability patterns themselves through interactive exploration rather than being told what to think
-3. **Rigorous**: Academic-grade methodology paired with accessible visuals, suitable for both household budgeting and published research
+1. **Unifying**: Promotes civic literacy and cross-generational empathy by showing how economic experiences differ by birth cohort, encouraging respectful dialogue rather than division
+2. **Transparent**: Every number traces back to its source with timestamps and formulas exposed; separates observed data from interpretation; includes "what the data shows / what it does not show" guardrails
+3. **Educational**: Explains economic cycles, volatility patterns, and historical context using neutral academic explanations with citations, fostering critical thinking over blame
 
-**Complexity Level**: Complex Application (advanced functionality, likely with multiple views)
-This is a data-intensive application with sophisticated time-series visualization, multi-dimensional comparisons, configurable wage scenarios, export capabilities with audit trails, and role-based access. It requires multiple coordinated views (dashboard, chart builder, methodology, sources) and complex state management for filters, baskets, and comparison configurations.
+**Complexity Level**: Complex Application (advanced multi-generational analytical platform)
+This is a sophisticated generational economics platform with long-run time-series (1950-present), volatility computation, birth-cohort analysis, event-overlay timelines, multi-dimensional comparisons, configurable scenarios, and educational modules. It requires coordinated views (generational dashboard, stability explorer, wage-vs-essentials, event timeline, dialogue mode) with complex state management for cohort filters, volatility windows, and historical annotations.
+
+**Target Users**: Multi-generational families exploring affordability differences, educators teaching economic literacy, students researching historical trends, tradespeople understanding wage dynamics, retirees comparing their experiences with younger generations, researchers analyzing long-term patterns.
 
 ## Essential Features
 
@@ -98,6 +100,73 @@ This is a data-intensive application with sophisticated time-series visualizatio
 - **Schedule Configuration**: Toggle to enable/disable auto-refresh; dropdown to select frequency; displays next scheduled refresh time and last scheduled refresh time; recommendations explain which schedule suits different use cases
 - **Graceful Degradation**: If a scheduled refresh fails, system retries on next schedule; user notified via toast; cached data remains available with "stale" indicator; manual refresh available as override
 
+---
+
+## Generational Economic Timeline Features
+
+### Generational Dashboard
+- **Functionality**: Interactive timeline spanning 1950-present with selectable generation overlays (Silent Generation, Baby Boomers, Gen X, Millennials, Gen Z) showing wages, essential goods prices, CPI, unemployment, interest rates, and volatility bands
+- **Purpose**: Help Americans understand how economic experiences differ by birth cohort, fostering empathy and shared understanding across generations
+- **Trigger**: User navigates to "Generations" tab or selects birth year filter
+- **Progression**: View timeline → Select birth year or generation → See affordability at ages 25/35/45 for that cohort → Compare multiple generations side-by-side → Toggle volatility overlays → Explore major events → Access dialogue prompts
+- **Success criteria**: Timeline loads decades of data smoothly (<3s); generation overlays clearly show cohort boundaries; affordability calculations use accurate historical wage/price data at calendar years corresponding to life stages; assumptions about interpolation are explicitly labeled; UI includes "What the data shows / What it does not show" panel
+
+### Long-Term Stability vs Volatility Explorer
+- **Functionality**: Dual-mode visualization showing (1) long-term trend view with smoothed rolling averages and (2) raw fluctuation view with volatility bands computed as standard deviation of annualized percent change over user-selected rolling windows (3-year, 5-year, 10-year)
+- **Purpose**: Separate stable growth periods from turbulent volatility cycles without implying intentional coordination; show observed patterns objectively
+- **Trigger**: User clicks "Stability Analysis" or toggles volatility view from timeline
+- **Progression**: View long-term trends → Toggle to raw data view → Select volatility window (3/5/10 year) → System computes rolling stddev of annualized changes → Visualize volatility bands → Identify stability vs turbulence periods → Cross-reference with event timeline
+- **Success criteria**: MUST clearly label smoothing method (e.g., "12-month moving average"); MUST allow instant toggle between smoothed and raw; MUST never hide access to underlying data; volatility formula shown in expandable tooltip; window length selector prominent and reactive
+
+### Wage vs Essentials Across Decades
+- **Functionality**: Multi-decade comparison (1950s through 2020s) showing how hours-of-work for essential basket evolved, with decade-by-decade breakdown and generation-specific views
+- **Purpose**: Quantify long-term affordability trends and show which essentials outpaced wage growth over different eras
+- **Trigger**: User selects "Decades Comparison" or explores from Generational Dashboard
+- **Progression**: Select decades to compare → View basket affordability by decade → See item-level changes → Filter by generation → Export decade report → Access methodology
+- **Success criteria**: Each decade shows median wage, basket cost, and hours-of-work; missing data clearly flagged with coverage notes; decade boundaries and aggregation rules explained; generation filter shows affordability at equivalent life stages
+
+### Event Overlay Timeline
+- **Functionality**: Historical timeline with annotated major economic events (recessions, oil shocks, financial crises, policy changes) overlaid on price/wage/volatility charts, with citations to credible academic or government sources
+- **Purpose**: Show how volatility correlates with documented events; provide context without implying hidden coordination; support media literacy
+- **Trigger**: User toggles "Events" overlay or clicks timeline markers
+- **Progression**: View economic timeline → Toggle event markers → Click event to see details + citation → See correlation with volatility metrics → Access educational explainer → Link to primary sources
+- **Success criteria**: Every event includes: name, date, brief neutral description, citation with URL, relevant metrics during event window; events MUST cite credible sources (NBER, Fed, BLS, academic papers); interpretive language avoided; users can filter event types (recessions, policy, shocks)
+
+### Psychological Perspective Module
+- **Functionality**: Educational content explaining economic cycles (expansion, contraction, business cycles), supply shocks, monetary policy (tightening/loosening), inflation dynamics, and media amplification effects using neutral academic language with citations
+- **Purpose**: Build economic literacy; help users understand volatility as systemic patterns rather than conspiracies; encourage critical thinking
+- **Trigger**: User clicks "Learn About Economics" or accesses explainers from info icons throughout app
+- **Progression**: Browse topics (cycles, inflation, monetary policy, supply shocks) → Read explanations with diagrams → View cited sources → Apply learning to timeline exploration → Access glossary
+- **Success criteria**: Content written at 10th-grade reading level; avoids political framing; cites economics textbooks, Fed publications, NBER papers; includes visual diagrams of concepts; glossary defines technical terms; cross-linked to relevant timeline periods
+
+### Civic Dialogue Mode
+- **Functionality**: Structured discussion prompts grounded in data, designed to encourage cross-generational empathy and respectful conversation about economic experiences
+- **Purpose**: Transform economic data into conversation-ready insights that promote unity through shared understanding rather than accusatory framing
+- **Trigger**: User clicks "Start Discussion" or accesses from Generational Dashboard
+- **Progression**: Select topic (affordability across generations, volatility experiences, wage growth eras) → View data-grounded prompt → See relevant charts → Generate discussion guide → Export for classroom/family use
+- **Success criteria**: Prompts avoid blame language; questions structured as "How did X differ between Y and Z?" rather than "Why did X group do Y?"; each prompt links to specific data visualizations; export includes charts + questions + methodology; educator mode provides facilitator guidance
+
+### Mathematical Transparency
+- **Functionality**: Every derived metric (growth rate, CAGR, rolling average, volatility band, affordability ratio, inflation adjustment) displays its formula in expandable tooltips with links to raw data points
+- **Purpose**: Establish trust through radical transparency; enable independent verification; support academic citation
+- **Trigger**: User hovers over any metric or clicks formula icon
+- **Progression**: Hover metric → See formula tooltip → Click for detailed view → View calculation with actual values → Link to raw data → Export calculation sheet
+- **Success criteria**: Formulas use standard mathematical notation; show example calculations with real numbers; link directly to source data points; derived series traceable to raw inputs; CSV exports include formulas as metadata
+
+### Data Integrity & Audit System
+- **Functionality**: Complete provenance tracking with CSV export of raw and derived series, dataset snapshot hashing, audit logs for methodology changes, and explicit disclosure of data gaps and revision history
+- **Purpose**: Enable reproducible research; establish credibility; allow independent verification; meet academic citation standards
+- **Trigger**: User exports data or views methodology details
+- **Progression**: Request export → System generates CSV with metadata → Includes hash of dataset snapshot → Audit log shows methodology version → Data gaps documented → Download complete package
+- **Success criteria**: MUST export both raw and derived series; MUST include tamper-evident hash; MUST log all methodology changes with dates/reasoning; MUST disclose coverage gaps with date ranges; revision history shows when data updated; exports include source citations with retrieval timestamps
+
+### Narrative Guardrails
+- **Functionality**: "What the Data Shows / What It Does Not Show" panels adjacent to every major chart, clearly separating observed volatility from unsupported claims about intentional control or coordination
+- **Purpose**: Prevent misinterpretation; maintain civic tone; separate fact from speculation; comply with educational/analytical framing requirements
+- **Trigger**: Automatically displayed with charts; can be expanded for detail
+- **Progression**: View chart → Read "Shows/Doesn't Show" panel → Understand limitations → Optional: view interpretive perspectives (labeled as opinion) → Make informed conclusions
+- **Success criteria**: MUST appear on every analytical view; "Shows" section lists only observable patterns; "Doesn't Show" explicitly states what cannot be concluded; interpretive commentary clearly labeled as perspective; users can toggle interpretive layer off; default view is fact-only
+
 ## Edge Case Handling
 
 - **API Outage**: Display last successful data with prominent "stale data" warning and retry timestamp, allow manual refresh attempt, show specific source failure messages
@@ -112,7 +181,17 @@ This is a data-intensive application with sophisticated time-series visualizatio
 
 ## Design Direction
 
-The design should evoke **authority, clarity, and scientific rigor** while remaining accessible to non-experts. Think data journalism aesthetic—The New York Times Upshot, FiveThirtyEight, or Our World in Data. Serious without being sterile, informative without being overwhelming. The interface should feel like a research tool built with care, where every element reinforces trustworthiness and transparency.
+The design should evoke **unity, clarity, and educational purpose** while maintaining scientific rigor. Think civic education meets data journalism—The New York Times Upshot, Our World in Data, Federal Reserve educational resources. The aesthetic should feel approachable yet authoritative, bridging generational divides through shared exploration rather than division. Every element should reinforce trustworthiness, neutrality, and transparency. The interface invites multi-generational families, educators, and citizens to explore together, fostering understanding over blame.
+
+## Compliance & Neutrality
+
+**Educational Disclaimer**: Platform includes clear statement that tool is educational and analytical, not financial or political advice. No predictive crisis claims or partisan messaging.
+
+**Evidence Standards**: All historical annotations cite credible primary sources (NBER, Federal Reserve, BLS, academic journals). Avoid attributing intent to unnamed actors or presenting unverified claims.
+
+**Fact-Interpretation Separation**: Observed volatility separated from claims about coordination or control. Interpretive commentary optional and clearly labeled as perspective, not fact.
+
+**Generational Framing**: Language promotes empathy ("How did experiences differ?") rather than blame ("Why did X generation do Y?"). Acknowledges structural economic forces over individual or generational fault.
 
 ## Color Selection
 

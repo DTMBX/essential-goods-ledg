@@ -9,6 +9,9 @@ import { SettingsView } from '@/components/SettingsView'
 import { MethodologyView } from '@/components/MethodologyView'
 import { AnalyticsView } from '@/components/AnalyticsView'
 import { DataSourcesView } from '@/components/DataSourcesView'
+import { GenerationalDashboardView } from '@/components/GenerationalDashboardView'
+import { VolatilityExplorerView } from '@/components/VolatilityExplorerView'
+import { LearningModuleView } from '@/components/LearningModuleView'
 import type { UserWageConfig } from '@/lib/types'
 
 function App() {
@@ -20,6 +23,12 @@ function App() {
       setActiveTab('analytics')
     } else if (hash === 'sources') {
       setActiveTab('sources')
+    } else if (hash === 'generations') {
+      setActiveTab('generations')
+    } else if (hash === 'volatility') {
+      setActiveTab('volatility')
+    } else if (hash === 'learn') {
+      setActiveTab('learn')
     }
   }, [])
   
@@ -92,6 +101,18 @@ function App() {
 
         {activeTab === 'analytics' && (
           <AnalyticsView />
+        )}
+
+        {activeTab === 'generations' && (
+          <GenerationalDashboardView />
+        )}
+
+        {activeTab === 'volatility' && (
+          <VolatilityExplorerView />
+        )}
+
+        {activeTab === 'learn' && (
+          <LearningModuleView />
         )}
 
         {activeTab === 'methodology' && (
