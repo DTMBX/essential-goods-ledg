@@ -90,11 +90,11 @@ export function AnalyticsView({ initialConfig }: AnalyticsViewProps) {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-start justify-between gap-4 flex-wrap">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex items-start justify-between gap-3 sm:gap-4 flex-wrap">
         <div>
-          <h1 className="font-display text-3xl font-bold mb-2">Wage vs Essentials Analytics</h1>
-          <p className="text-muted-foreground">
+          <h1 className="font-display text-2xl sm:text-3xl font-bold mb-1 sm:mb-2">Wage vs Essentials Analytics</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">
             Quantifying whether minimum wage increases keep up with essential-goods inflation
           </p>
         </div>

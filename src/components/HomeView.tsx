@@ -57,11 +57,11 @@ export function HomeView({ wageConfig, onExplore, onCompare }: HomeViewProps) {
   const inflationRate = yearAgoCPI ? calculateInflationRate(yearAgoCPI.value, latestCPI.value) : 0
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-start justify-between gap-4 flex-wrap">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex items-start justify-between gap-3 sm:gap-4 flex-wrap">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Essential Goods Ledger</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-1 sm:mb-2">Essential Goods Ledger</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">
             Track everyday necessities through evidence-driven price and affordability data
           </p>
         </div>
@@ -70,17 +70,20 @@ export function HomeView({ wageConfig, onExplore, onCompare }: HomeViewProps) {
             variant="outline"
             size="sm"
             onClick={() => window.location.hash = 'sources'}
-            className="gap-2 text-muted-foreground hover:text-foreground"
+            className="gap-1.5 sm:gap-2 text-muted-foreground hover:text-foreground text-xs sm:text-sm"
           >
             <Clock size={14} />
-            <span className="text-xs">
+            <span className="text-xs hidden sm:inline">
               Updated {getTimeSinceRefresh(refreshMetadata.lastGlobalRefresh)}
+            </span>
+            <span className="text-xs sm:hidden">
+              {getTimeSinceRefresh(refreshMetadata.lastGlobalRefresh)}
             </span>
           </Button>
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
         <MetricCard
           title="Current Basket Cost"
           value={`$${totalBasketCost.toFixed(2)}`}
@@ -109,21 +112,21 @@ export function HomeView({ wageConfig, onExplore, onCompare }: HomeViewProps) {
         />
       </div>
 
-      <Card className="p-6">
-        <div className="flex items-center justify-between mb-4">
+      <Card className="p-4 sm:p-6">
+        <div className="flex items-center justify-between mb-3 sm:mb-4 gap-2 flex-wrap">
           <div>
-            <h2 className="text-xl font-semibold mb-1">Essential Basket</h2>
-            <p className="text-sm text-muted-foreground">
+            <h2 className="text-lg sm:text-xl font-semibold mb-0.5 sm:mb-1">Essential Basket</h2>
+            <p className="text-xs sm:text-sm text-muted-foreground">
               Curated set of everyday necessities tracked over time
             </p>
           </div>
-          <Button onClick={() => onCompare(basketItems.map(i => i.id))}>
-            <ChartLine size={16} className="mr-2" />
+          <Button onClick={() => onCompare(basketItems.map(i => i.id))} size="sm" className="text-xs sm:text-sm">
+            <ChartLine size={16} className="mr-1.5 sm:mr-2" />
             Compare All
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {basketItems.map(item => {
             const latest = getLatestPrice(item.id)
             const history = getPriceHistory(item.id)
@@ -140,27 +143,27 @@ export function HomeView({ wageConfig, onExplore, onCompare }: HomeViewProps) {
             return (
               <Card 
                 key={item.id} 
-                className="p-4 hover:shadow-md transition-shadow cursor-pointer"
+                className="p-3 sm:p-4 hover:shadow-md transition-shadow cursor-pointer touch-manipulation"
                 onClick={() => onCompare([item.id])}
               >
-                <div className="space-y-3">
+                <div className="space-y-2 sm:space-y-3">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <h3 className="font-semibold mb-1">{item.name}</h3>
+                      <h3 className="font-semibold mb-1 text-sm sm:text-base">{item.name}</h3>
                       <CategoryBadge category={item.category} />
                     </div>
                   </div>
 
                   <div className="space-y-1">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-2xl font-bold font-mono">
+                    <div className="flex items-baseline gap-1.5 sm:gap-2">
+                      <span className="text-xl sm:text-2xl font-bold font-mono">
                         ${latest?.nominalPrice.toFixed(2)}
                       </span>
-                      <span className="text-sm text-muted-foreground">
+                      <span className="text-xs sm:text-sm text-muted-foreground">
                         /{item.unitStandard}
                       </span>
                     </div>
-                    <div className="text-sm text-muted-foreground font-mono">
+                    <div className="text-xs sm:text-sm text-muted-foreground font-mono">
                       {hoursOfWork.toFixed(2)} hours of work
                     </div>
                   </div>
@@ -168,11 +171,11 @@ export function HomeView({ wageConfig, onExplore, onCompare }: HomeViewProps) {
                   {change !== 0 && (
                     <Badge 
                       variant="secondary"
-                      className={
+                      className={`text-xs ${
                         change > 0 
                           ? 'bg-[var(--decrease)] text-white' 
                           : 'bg-[var(--increase)] text-white'
-                      }
+                      }`}
                     >
                       {change > 0 ? '+' : ''}{change.toFixed(1)}% YoY
                     </Badge>
@@ -184,12 +187,12 @@ export function HomeView({ wageConfig, onExplore, onCompare }: HomeViewProps) {
         </div>
       </Card>
 
-      <Card className="p-6 bg-muted/50 border-accent/30">
-        <div className="flex items-start gap-3">
-          <Info size={24} className="text-accent flex-shrink-0 mt-1" />
-          <div className="space-y-2">
-            <h3 className="font-semibold">Evidence-First Methodology</h3>
-            <p className="text-sm text-muted-foreground">
+      <Card className="p-4 sm:p-6 bg-muted/50 border-accent/30">
+        <div className="flex items-start gap-2 sm:gap-3">
+          <Info size={20} className="sm:w-6 sm:h-6 text-accent flex-shrink-0 mt-0.5 sm:mt-1" />
+          <div className="space-y-1 sm:space-y-2">
+            <h3 className="font-semibold text-sm sm:text-base">Evidence-First Methodology</h3>
+            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
               All prices sourced from USDA Agricultural Marketing Service and U.S. Energy Information Administration. 
               Consumer Price Index (CPI) data from Bureau of Labor Statistics (base year 1982-84 = 100). 
               Hours-of-work calculated as: price ÷ hourly wage. 

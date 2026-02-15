@@ -82,18 +82,18 @@ export function MobileNav({ isOpen, onClose, activeTab, onTabChange, selectedIte
             animate={{ x: 0 }}
             exit={{ x: '-100%' }}
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            className="fixed left-0 top-0 bottom-0 w-80 max-w-[85vw] bg-card border-r border-border z-50 flex flex-col shadow-2xl"
+            className="fixed left-0 top-0 bottom-0 w-72 sm:w-80 max-w-[85vw] bg-card border-r border-border z-50 flex flex-col shadow-2xl"
           >
-            <div className="flex items-center justify-between p-6 border-b border-border">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 text-primary">
-                  <Logo size={40} />
+            <div className="flex items-center justify-between p-4 sm:p-6 border-b border-border">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 text-primary">
+                  <Logo size={window.innerWidth < 640 ? 32 : 40} />
                 </div>
                 <div>
-                  <h2 className="font-display font-bold text-base leading-tight">
+                  <h2 className="font-display font-bold text-sm sm:text-base leading-tight">
                     Chronos
                   </h2>
-                  <p className="text-xs text-muted-foreground leading-tight">
+                  <p className="text-[10px] sm:text-xs text-muted-foreground leading-tight">
                     Economic Insights
                   </p>
                 </div>
@@ -102,14 +102,14 @@ export function MobileNav({ isOpen, onClose, activeTab, onTabChange, selectedIte
                 variant="ghost"
                 size="icon"
                 onClick={onClose}
-                className="h-9 w-9 rounded-lg hover:bg-muted"
+                className="h-9 w-9 sm:h-10 sm:w-10 min-h-[44px] min-w-[44px] rounded-lg hover:bg-muted touch-manipulation"
               >
                 <X size={20} weight="bold" />
               </Button>
             </div>
 
-            <nav className="flex-1 overflow-y-auto p-4">
-              <ul className="space-y-1">
+            <nav className="flex-1 overflow-y-auto p-3 sm:p-4">
+              <ul className="space-y-0.5 sm:space-y-1">
                 {navItems.map((item) => {
                   const Icon = item.icon
                   const isActive = activeTab === item.id
@@ -120,7 +120,7 @@ export function MobileNav({ isOpen, onClose, activeTab, onTabChange, selectedIte
                       <button
                         onClick={() => handleNavClick(item.id)}
                         className={cn(
-                          'w-full flex items-center gap-4 px-4 py-3.5 rounded-lg transition-all duration-200 group relative overflow-hidden',
+                          'w-full flex items-center gap-3 sm:gap-4 px-3 py-2.5 sm:px-4 sm:py-3.5 rounded-lg transition-all duration-200 group relative overflow-hidden touch-manipulation',
                           isActive && item.highlight
                             ? 'bg-accent text-accent-foreground shadow-sm'
                             : isActive
@@ -140,9 +140,9 @@ export function MobileNav({ isOpen, onClose, activeTab, onTabChange, selectedIte
                           />
                         )}
                         
-                        <div className="relative z-10 flex items-center gap-4 flex-1">
+                        <div className="relative z-10 flex items-center gap-3 sm:gap-4 flex-1">
                           <Icon
-                            size={22}
+                            size={window.innerWidth < 640 ? 20 : 22}
                             weight={isActive ? 'bold' : 'regular'}
                             className={cn(
                               'flex-shrink-0 transition-transform duration-200',
@@ -150,16 +150,16 @@ export function MobileNav({ isOpen, onClose, activeTab, onTabChange, selectedIte
                             )}
                           />
                           <div className="flex-1 text-left">
-                            <div className="flex items-center gap-2">
-                              <span className="font-medium text-[15px]">{item.label}</span>
+                            <div className="flex items-center gap-1.5 sm:gap-2">
+                              <span className="font-medium text-[13px] sm:text-[15px]">{item.label}</span>
                               {item.highlight && !isActive && (
-                                <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4">
+                                <Badge variant="outline" className="text-[9px] sm:text-[10px] px-1 sm:px-1.5 py-0 h-3.5 sm:h-4">
                                   NEW
                                 </Badge>
                               )}
                               {showBadge && (
                                 <span className={cn(
-                                  'px-2 py-0.5 rounded-full text-xs font-mono font-semibold',
+                                  'px-1.5 sm:px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-mono font-semibold',
                                   isActive 
                                     ? 'bg-primary-foreground/20 text-primary-foreground'
                                     : 'bg-accent text-accent-foreground'
@@ -169,7 +169,7 @@ export function MobileNav({ isOpen, onClose, activeTab, onTabChange, selectedIte
                               )}
                             </div>
                             <p className={cn(
-                              'text-xs mt-0.5',
+                              'text-[10px] sm:text-xs mt-0.5',
                               isActive ? 'text-primary-foreground/80' : 'text-muted-foreground'
                             )}>
                               {item.description}
@@ -183,10 +183,10 @@ export function MobileNav({ isOpen, onClose, activeTab, onTabChange, selectedIte
               </ul>
             </nav>
 
-            <div className="p-4 border-t border-border bg-muted/30">
-              <div className="text-xs text-muted-foreground text-center space-y-1">
+            <div className="p-3 sm:p-4 border-t border-border bg-muted/30">
+              <div className="text-[10px] sm:text-xs text-muted-foreground text-center space-y-0.5 sm:space-y-1">
                 <p className="font-medium">Generational Economic Timeline</p>
-                <p>Build understanding through transparent data</p>
+                <p className="hidden sm:block">Build understanding through transparent data</p>
               </div>
             </div>
           </motion.div>

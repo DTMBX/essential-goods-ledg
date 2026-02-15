@@ -31,34 +31,34 @@ export function GenerationalDashboardView() {
   ).slice(0, 3)
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-start justify-between">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex items-start justify-between gap-3 sm:gap-4 flex-wrap">
         <div>
-          <h1 className="font-display text-3xl font-bold text-foreground mb-2">
+          <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground mb-1 sm:mb-2">
             Generational Economic Timeline
           </h1>
-          <p className="text-muted-foreground max-w-3xl">
+          <p className="text-sm sm:text-base text-muted-foreground max-w-3xl">
             Explore how economic experiences differ by birth cohort. Compare affordability, volatility, and wage dynamics across generations to build shared understanding through data.
           </p>
         </div>
       </div>
 
       <Alert className="border-accent/30 bg-accent/5">
-        <Info className="h-4 w-4 text-accent" />
-        <AlertDescription>
+        <Info className="h-4 w-4 text-accent flex-shrink-0" />
+        <AlertDescription className="text-xs sm:text-sm">
           <strong>Educational Tool:</strong> This platform promotes civic literacy and cross-generational empathy by showing observed economic patterns. 
           It separates documented data from interpretation and does not attribute intent or assign blame.
         </AlertDescription>
       </Alert>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="p-6 lg:col-span-2">
-          <div className="flex items-center gap-2 mb-6">
-            <Users className="w-5 h-5 text-primary" />
-            <h2 className="font-display text-xl font-semibold">Select Your Birth Year</h2>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+        <Card className="p-4 sm:p-6 lg:col-span-2">
+          <div className="flex items-center gap-2 mb-4 sm:mb-6">
+            <Users className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+            <h2 className="font-display text-lg sm:text-xl font-semibold">Select Your Birth Year</h2>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             <div>
               <label className="text-sm font-medium mb-2 block">Birth Year</label>
               <Select

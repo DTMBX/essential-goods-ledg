@@ -98,7 +98,7 @@ function App() {
         selectedItemsCount={selectedItems?.length || 0}
       />
 
-      <main className="container mx-auto px-4 py-6 lg:py-8">
+      <main className="container mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:py-8">
         {activeTab === 'home' && wageConfig && (
           <HomeView 
             wageConfig={wageConfig}

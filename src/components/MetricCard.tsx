@@ -28,33 +28,33 @@ export function MetricCard({
 
   return (
     <Card
-      className={`p-4 transition-all duration-200 hover:shadow-md ${
-        onClick ? 'cursor-pointer' : ''
+      className={`p-3 sm:p-4 transition-all duration-200 hover:shadow-md ${
+        onClick ? 'cursor-pointer touch-manipulation' : ''
       }`}
       onClick={onClick}
     >
-      <div className="space-y-3">
-        <div className="flex items-start justify-between">
-          <div className="space-y-1 flex-1">
-            <p className="text-sm font-medium text-muted-foreground">{title}</p>
-            <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-bold font-mono">{value}</span>
+      <div className="space-y-2 sm:space-y-3">
+        <div className="flex items-start justify-between gap-2">
+          <div className="space-y-0.5 sm:space-y-1 flex-1 min-w-0">
+            <p className="text-xs sm:text-sm font-medium text-muted-foreground">{title}</p>
+            <div className="flex items-baseline gap-1.5 sm:gap-2 flex-wrap">
+              <span className="text-xl sm:text-2xl font-bold font-mono leading-none">{value}</span>
               {unit && (
-                <span className="text-sm text-muted-foreground font-mono">
+                <span className="text-xs sm:text-sm text-muted-foreground font-mono">
                   {unit}
                 </span>
               )}
             </div>
           </div>
-          {icon && <div className="text-muted-foreground">{icon}</div>}
+          {icon && <div className="text-muted-foreground flex-shrink-0">{icon}</div>}
         </div>
 
         {(change !== undefined || subtitle) && (
-          <div className="flex items-center justify-between text-sm">
-            {subtitle && <span className="text-muted-foreground">{subtitle}</span>}
+          <div className="flex items-center justify-between text-xs sm:text-sm gap-2">
+            {subtitle && <span className="text-muted-foreground truncate">{subtitle}</span>}
             {change !== undefined && (
               <div
-                className={`flex items-center gap-1 font-medium ${
+                className={`flex items-center gap-1 font-medium flex-shrink-0 ${
                   isIncrease
                     ? 'text-[var(--increase)]'
                     : isDecrease
@@ -62,8 +62,8 @@ export function MetricCard({
                     : 'text-muted-foreground'
                 }`}
               >
-                {isIncrease && <TrendUp size={16} weight="bold" />}
-                {isDecrease && <TrendDown size={16} weight="bold" />}
+                {isIncrease && <TrendUp size={14} weight="bold" />}
+                {isDecrease && <TrendDown size={14} weight="bold" />}
                 <span>{Math.abs(change).toFixed(1)}%</span>
               </div>
             )}

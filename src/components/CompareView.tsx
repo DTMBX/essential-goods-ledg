@@ -86,46 +86,46 @@ export function CompareView({ selectedItemIds, onRemoveItem, hourlyWage }: Compa
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div>
-        <h1 className="text-3xl font-bold mb-2">Compare Items</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-1 sm:mb-2">Compare Items</h1>
+        <p className="text-sm sm:text-base text-muted-foreground">
           Visualize price trends and affordability across time
         </p>
       </div>
 
       {selectedItemIds.length === 0 ? (
-        <Card className="p-12 text-center">
-          <Info size={48} className="mx-auto mb-4 text-muted-foreground" />
-          <h3 className="text-lg font-semibold mb-2">No items selected</h3>
-          <p className="text-muted-foreground mb-4">
+        <Card className="p-8 sm:p-12 text-center">
+          <Info size={40} className="sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 text-muted-foreground" />
+          <h3 className="text-base sm:text-lg font-semibold mb-1.5 sm:mb-2">No items selected</h3>
+          <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4">
             Add items from the Explore tab to start comparing
           </p>
         </Card>
       ) : (
         <>
-          <Card className="p-6">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between flex-wrap gap-4">
-                <div className="space-y-2">
-                  <Label>Selected Items</Label>
-                  <div className="flex gap-2 flex-wrap">
+          <Card className="p-4 sm:p-6">
+            <div className="space-y-3 sm:space-y-4">
+              <div className="flex items-start justify-between flex-wrap gap-3 sm:gap-4">
+                <div className="space-y-1.5 sm:space-y-2 flex-1 min-w-0">
+                  <Label className="text-xs sm:text-sm">Selected Items</Label>
+                  <div className="flex gap-1.5 sm:gap-2 flex-wrap">
                     {selectedItemIds.map((itemId, index) => {
                       const item = getItemById(itemId)
                       return (
                         <Badge 
                           key={itemId}
-                          className="pr-1"
+                          className="pr-1 text-xs sm:text-sm"
                           style={{ 
                             backgroundColor: CHART_COLORS[index % CHART_COLORS.length],
                             color: 'white'
                           }}
                         >
-                          {item?.name}
+                          <span className="truncate max-w-[120px] sm:max-w-none">{item?.name}</span>
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-4 w-4 p-0 ml-2 hover:bg-white/20"
+                            className="h-4 w-4 p-0 ml-1.5 sm:ml-2 hover:bg-white/20 touch-manipulation"
                             onClick={() => onRemoveItem(itemId)}
                           >
                             <X size={12} />
@@ -136,11 +136,11 @@ export function CompareView({ selectedItemIds, onRemoveItem, hourlyWage }: Compa
                   </div>
                 </div>
 
-                <div className="flex gap-3">
-                  <div className="space-y-2">
-                    <Label>Metric Mode</Label>
+                <div className="flex gap-2 sm:gap-3 w-full sm:w-auto">
+                  <div className="space-y-1.5 sm:space-y-2 flex-1 sm:flex-initial">
+                    <Label className="text-xs sm:text-sm">Metric Mode</Label>
                     <Select value={metricMode} onValueChange={(v) => setMetricMode(v as MetricMode)}>
-                      <SelectTrigger className="w-[180px]">
+                      <SelectTrigger className="w-full sm:w-[180px] h-9 sm:h-10 text-xs sm:text-sm">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -151,10 +151,10 @@ export function CompareView({ selectedItemIds, onRemoveItem, hourlyWage }: Compa
                     </Select>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label>Time Period</Label>
+                  <div className="space-y-1.5 sm:space-y-2 flex-1 sm:flex-initial">
+                    <Label className="text-xs sm:text-sm">Time Period</Label>
                     <Select value={dateRange} onValueChange={(v) => setDateRange(v as any)}>
-                      <SelectTrigger className="w-[140px]">
+                      <SelectTrigger className="w-full sm:w-[140px] h-9 sm:h-10 text-xs sm:text-sm">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>

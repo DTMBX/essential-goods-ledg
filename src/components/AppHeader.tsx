@@ -19,33 +19,33 @@ export function AppHeader({ activeTab, onTabChange, selectedItemsCount }: AppHea
   return (
     <>
       <header className="border-b bg-card/95 backdrop-blur-md sticky top-0 z-40 shadow-sm">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16 lg:h-[72px]">
-            <div className="flex items-center gap-2 lg:gap-3 min-w-0 flex-1">
+        <div className="container mx-auto px-3 sm:px-4">
+          <div className="flex items-center justify-between h-14 sm:h-16 lg:h-[72px]">
+            <div className="flex items-center gap-1.5 sm:gap-2 lg:gap-3 min-w-0 flex-1">
               {isMobile && (
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => setMobileNavOpen(true)}
-                  className="flex-shrink-0 h-11 w-11 min-h-[44px] min-w-[44px] rounded-lg hover:bg-muted lg:hidden touch-manipulation"
+                  className="flex-shrink-0 h-10 w-10 sm:h-11 sm:w-11 min-h-[44px] min-w-[44px] rounded-lg hover:bg-muted lg:hidden touch-manipulation -ml-1"
                   aria-label="Open navigation menu"
                 >
-                  <List size={24} weight="bold" />
+                  <List size={22} weight="bold" />
                 </Button>
               )}
               
               <button
                 onClick={() => onTabChange('home')}
-                className="flex items-center gap-2 lg:gap-2.5 min-w-0 flex-1 group"
+                className="flex items-center gap-1.5 sm:gap-2 lg:gap-2.5 min-w-0 flex-1 group touch-manipulation py-1"
               >
                 <div className="flex-shrink-0 text-foreground transition-all duration-200 group-hover:text-primary">
-                  <Logo size={isMobile ? 32 : 36} />
+                  <Logo size={isMobile ? 28 : 36} />
                 </div>
                 <div className="min-w-0 hidden sm:block">
-                  <h1 className="font-mono font-bold text-sm lg:text-base leading-tight truncate tracking-tight">
+                  <h1 className="font-mono font-bold text-xs sm:text-sm lg:text-base leading-tight truncate tracking-tight">
                     CHRONOS
                   </h1>
-                  <p className="text-[10px] lg:text-xs text-muted-foreground leading-tight hidden md:block truncate">
+                  <p className="text-[9px] sm:text-[10px] lg:text-xs text-muted-foreground leading-tight hidden md:block truncate">
                     Generational Economic Insights
                   </p>
                 </div>

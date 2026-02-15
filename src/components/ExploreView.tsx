@@ -28,35 +28,36 @@ export function ExploreView({ selectedItemIds, onToggleItem, hourlyWage }: Explo
   })
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div>
-        <h1 className="text-3xl font-bold mb-2">Explore Items</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-1 sm:mb-2">Explore Items</h1>
+        <p className="text-sm sm:text-base text-muted-foreground">
           Search and select items to add to your comparison
         </p>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         <div className="relative">
           <MagnifyingGlass
-            size={20}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+            size={18}
+            className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
           />
           <Input
             placeholder="Search items..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
+            className="pl-9 sm:pl-10 text-sm sm:text-base h-10 sm:h-11"
           />
         </div>
 
-        <div className="flex gap-2 flex-wrap">
+        <div className="flex gap-1.5 sm:gap-2 flex-wrap">
           {categories.map(cat => (
             <Button
               key={cat}
               variant={selectedCategory === cat ? 'default' : 'outline'}
               size="sm"
               onClick={() => setSelectedCategory(cat)}
+              className="text-xs sm:text-sm touch-manipulation"
             >
               {cat.charAt(0).toUpperCase() + cat.slice(1)}
             </Button>
@@ -64,13 +65,13 @@ export function ExploreView({ selectedItemIds, onToggleItem, hourlyWage }: Explo
         </div>
 
         {selectedItemIds.length > 0 && (
-          <Card className="p-4 bg-accent/10 border-accent">
+          <Card className="p-3 sm:p-4 bg-accent/10 border-accent">
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-medium">
+                <p className="font-medium text-sm sm:text-base">
                   {selectedItemIds.length} item{selectedItemIds.length !== 1 ? 's' : ''} selected
                 </p>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   Ready for comparison
                 </p>
               </div>
@@ -79,7 +80,7 @@ export function ExploreView({ selectedItemIds, onToggleItem, hourlyWage }: Explo
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
         {filteredItems.map(item => {
           const latest = getLatestPrice(item.id)
           const hoursOfWork = latest 
@@ -90,15 +91,15 @@ export function ExploreView({ selectedItemIds, onToggleItem, hourlyWage }: Explo
           return (
             <Card 
               key={item.id}
-              className={`p-4 transition-all hover:shadow-md ${
+              className={`p-3 sm:p-4 transition-all hover:shadow-md touch-manipulation ${
                 isSelected ? 'ring-2 ring-accent' : ''
               }`}
             >
-              <div className="space-y-3">
+              <div className="space-y-2 sm:space-y-3">
                 <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <h3 className="font-semibold mb-2">{item.name}</h3>
-                    <p className="text-sm text-muted-foreground mb-2">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold mb-1 sm:mb-2 text-sm sm:text-base">{item.name}</h3>
+                    <p className="text-xs sm:text-sm text-muted-foreground mb-1.5 sm:mb-2 line-clamp-2">
                       {item.description}
                     </p>
                     <CategoryBadge category={item.category} />
@@ -107,15 +108,15 @@ export function ExploreView({ selectedItemIds, onToggleItem, hourlyWage }: Explo
 
                 {latest && (
                   <div className="space-y-1 pt-2 border-t">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-xl font-bold font-mono">
+                    <div className="flex items-baseline gap-1.5 sm:gap-2">
+                      <span className="text-lg sm:text-xl font-bold font-mono">
                         ${latest.nominalPrice.toFixed(2)}
                       </span>
-                      <span className="text-sm text-muted-foreground">
+                      <span className="text-xs sm:text-sm text-muted-foreground">
                         /{item.unitStandard}
                       </span>
                     </div>
-                    <div className="text-sm text-muted-foreground font-mono">
+                    <div className="text-xs sm:text-sm text-muted-foreground font-mono">
                       {hoursOfWork.toFixed(2)} hours of work
                     </div>
                   </div>
@@ -124,17 +125,17 @@ export function ExploreView({ selectedItemIds, onToggleItem, hourlyWage }: Explo
                 <Button
                   variant={isSelected ? 'secondary' : 'default'}
                   size="sm"
-                  className="w-full"
+                  className="w-full text-xs sm:text-sm touch-manipulation"
                   onClick={() => onToggleItem(item.id)}
                 >
                   {isSelected ? (
                     <>
-                      <Check size={16} className="mr-2" />
+                      <Check size={16} className="mr-1.5 sm:mr-2" />
                       Selected
                     </>
                   ) : (
                     <>
-                      <Plus size={16} className="mr-2" />
+                      <Plus size={16} className="mr-1.5 sm:mr-2" />
                       Add to Compare
                     </>
                   )}

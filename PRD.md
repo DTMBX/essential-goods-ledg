@@ -548,16 +548,23 @@ Animations should reinforce data relationships and state changes without distrac
 - Controls: CaretUp/Down (sort), Funnel (filter), SlidersHorizontal (configure)
 
 **Spacing**:
-- Container padding: p-6 for main sections, p-4 for cards, p-3 for compact items
-- Vertical spacing: space-y-6 between major sections, space-y-4 within sections, space-y-2 for related items
-- Grid gaps: gap-6 for card grids, gap-4 for form layouts, gap-2 for inline groups
-- Component spacing: Buttons have px-4 py-2, inputs have px-3 py-2, large touch targets min 44px
+- Container padding: p-4 sm:p-6 for main sections, p-3 sm:p-4 for cards, p-2 sm:p-3 for compact items
+- Vertical spacing: space-y-4 sm:space-y-6 between major sections, space-y-3 sm:space-y-4 within sections, space-y-1.5 sm:space-y-2 for related items
+- Grid gaps: gap-3 sm:gap-4 lg:gap-6 for card grids, gap-2 sm:gap-3 for form layouts, gap-1.5 sm:gap-2 for inline groups
+- Component spacing: Buttons have px-3 sm:px-4 py-1.5 sm:py-2, inputs have px-2.5 sm:px-3 py-1.5 sm:py-2, large touch targets min 44px
+- Header heights: h-14 sm:h-16 lg:h-18 with responsive logo sizing and compact menu button placement
+- Typography scaling: text-xs sm:text-sm for body, text-2xl sm:text-3xl for headings, with reduced line-height on mobile
 
-**Mobile**:
-- Tabs → Horizontal scroll with snap points, sticky navigation bar
+**Mobile** (Optimized for touch and small screens):
+- Tabs → Horizontal scroll with snap points, sticky navigation bar with reduced height (h-14 vs h-16)
 - Tables → Horizontal scroll with fixed first column, or card-based stacked layout for key data
 - Charts → Full-width with touch-optimized zoom/pan, simplified controls in bottom sheet
-- Multi-column grids → Single column stack on <768px, 2-column on tablet, 3+ on desktop
+- Multi-column grids → Single column stack on mobile (<640px), 2-column on tablet (sm:), 3+ on desktop (lg:)
 - Dialogs → Full-screen on mobile with slide-up animation
-- Large metrics → Reduce font size by 20-30% on mobile, maintain hierarchy
-- Sidebars → Drawer pattern with hamburger menu on mobile
+- Large metrics → Text scaling from text-xl to text-2xl (mobile to desktop), icons 20px to 24px
+- Sidebars → Slide-in drawer (w-72 sm:w-80) with proper touch targets, hamburger button 44x44px minimum
+- Navigation menu items → Compact padding (py-2.5 sm:py-3.5) with responsive icon sizing (20px to 22px)
+- Container margins → Reduced outer padding (px-3 vs px-4) on mobile to maximize content area
+- Badge/chip sizing → Smaller text (text-[10px] sm:text-xs) and tighter padding for mobile readability
+- Form controls → Responsive height (h-9 sm:h-10) with proper touch-friendly sizing
+- Card inner spacing → Reduced from p-4 to p-3 sm:p-4 to fit more content on small screens
