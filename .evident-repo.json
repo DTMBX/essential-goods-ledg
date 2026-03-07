@@ -1,0 +1,23 @@
+{
+  "_manifest": "evident-repo",
+  "_version": 1,
+  "name": "Essential Goods Ledger",
+  "description": "Cross-generational economic data tracker — prices, wages, CPI, and purchasing power analysis.",
+  "role": "product-satellite",
+  "family": "Evident",
+  "business": "Evident Technologies LLC",
+  "stack": "React + TypeScript + D3 + Recharts",
+  "outputType": "static-site",
+  "exportTargets": ["GitHub Pages"],
+  "siteUrl": null,
+  "githubUrl": "https://github.com/DTMBX/essential-goods-ledg",
+  "brand": "evident",
+  "packagingStatus": "standalone",
+  "releaseStatus": "experimental",
+  "sharedStandardsVersion": "1.0",
+  "tools": [],
+  "owner": "Devon Tyler",
+  "satelliteTier": "product",
+  "catalogVisibility": "listed",
+  "tokenFamily": "evident"
+}
