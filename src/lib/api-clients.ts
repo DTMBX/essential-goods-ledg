@@ -1,5 +1,12 @@
 import type { RawPricePoint, UnitStandard } from './types'
 
+/**
+ * When VITE_PROXY_URL is set, all federal API calls are routed through
+ * the Cloudflare Worker proxy so API keys never reach the browser.
+ * When unset, clients fall back to direct calls with public/demo keys.
+ */
+const PROXY_URL = import.meta.env.VITE_PROXY_URL as string | undefined
+
 export interface APIClientConfig {
   baseUrl: string
   retryAttempts: number
@@ -123,26 +130,36 @@ export class BLSAPIClient {
     startYear: string,
     endYear: string
   ): Promise<RawPricePoint[]> {
-    const url = `${this.config.baseUrl}/timeseries/data/`
-    const body = {
+    const payload = {
       seriesid: [seriesId],
       startyear: startYear,
       endyear: endYear,
-      registrationkey: 'PUBLIC',
     }
 
     try {
       const controller = new AbortController()
       const timeoutId = setTimeout(() => controller.abort(), this.config.timeoutMs)
 
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body),
-        signal: controller.signal,
-      })
+      let response: Response
+
+      if (PROXY_URL) {
+        // Route through Cloudflare Worker — key injected server-side
+        response = await fetch(`${PROXY_URL}/api/bls`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          signal: controller.signal,
+        })
+      } else {
+        // Direct call with public key (local dev fallback)
+        const url = `${this.config.baseUrl}/timeseries/data/`
+        response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...payload, registrationkey: 'PUBLIC' }),
+          signal: controller.signal,
+        })
+      }
 
       clearTimeout(timeoutId)
 
@@ -249,24 +266,37 @@ export class EIAAPIClient {
     endDate: string
   ): Promise<RawPricePoint[]> {
     const route = this.getRouteForSeries(seriesId)
-    const url = `${this.config.baseUrl}${route}/data/`
     
-    const params = new URLSearchParams({
+    const params: Record<string, string> = {
       frequency: 'monthly',
       'data[0]': 'value',
       start: startDate.substring(0, 7),
       end: endDate.substring(0, 7),
       sort: 'date',
-      api_key: 'DEMO_KEY',
-    })
+    }
 
     try {
       const controller = new AbortController()
       const timeoutId = setTimeout(() => controller.abort(), this.config.timeoutMs)
 
-      const response = await fetch(`${url}?${params}`, {
-        signal: controller.signal,
-      })
+      let response: Response
+
+      if (PROXY_URL) {
+        // Route through Cloudflare Worker — key injected server-side
+        response = await fetch(`${PROXY_URL}/api/eia`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ route, params }),
+          signal: controller.signal,
+        })
+      } else {
+        // Direct call with demo key (local dev fallback)
+        const url = `${this.config.baseUrl}${route}/data/`
+        const searchParams = new URLSearchParams({ ...params, api_key: 'DEMO_KEY' })
+        response = await fetch(`${url}?${searchParams}`, {
+          signal: controller.signal,
+        })
+      }
 
       clearTimeout(timeoutId)
 
@@ -384,25 +414,38 @@ export class USDAAPIClient {
   private async fetchQuickStatsData(request: USDAQuickStatsRequest): Promise<RawPricePoint[]> {
     const url = `${this.config.baseUrl}/api_GET/`
     
-    const params = new URLSearchParams({
-      key: 'DEMO_KEY',
+    const params: Record<string, string> = {
       commodity_desc: request.commodity,
       statisticcat_desc: 'PRICE RECEIVED',
       agg_level_desc: 'NATIONAL',
       format: 'JSON',
-    })
+    }
 
-    if (request.year) params.append('year', request.year)
-    if (request.beginDate) params.append('begin_date', request.beginDate)
-    if (request.endDate) params.append('end_date', request.endDate)
+    if (request.year) params.year = request.year
+    if (request.beginDate) params.begin_date = request.beginDate
+    if (request.endDate) params.end_date = request.endDate
 
     try {
       const controller = new AbortController()
       const timeoutId = setTimeout(() => controller.abort(), this.config.timeoutMs)
 
-      const response = await fetch(`${url}?${params}`, {
-        signal: controller.signal,
-      })
+      let response: Response
+
+      if (PROXY_URL) {
+        // Route through Cloudflare Worker — key injected server-side
+        response = await fetch(`${PROXY_URL}/api/usda`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ params }),
+          signal: controller.signal,
+        })
+      } else {
+        // Direct call with demo key (local dev fallback)
+        const searchParams = new URLSearchParams({ ...params, key: 'DEMO_KEY' })
+        response = await fetch(`${url}?${searchParams}`, {
+          signal: controller.signal,
+        })
+      }
 
       clearTimeout(timeoutId)
 

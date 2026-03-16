@@ -1,0 +1,11 @@
+name = "federal-data-proxy"
+main = "index.ts"
+compatibility_date = "2025-01-01"
+
+[vars]
+ALLOWED_ORIGIN = "https://ledger.xtx396.com"
+
+# API keys — set via `wrangler secret put`:
+#   wrangler secret put BLS_API_KEY
+#   wrangler secret put EIA_API_KEY
+#   wrangler secret put USDA_API_KEY
