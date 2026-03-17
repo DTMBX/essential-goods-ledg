@@ -28,6 +28,11 @@ dist-ssr
 **/agent-eval-report*
 packages
 pids
+
+# Spark artifacts (legacy)
+spark.meta.json
+.spark-initial-sha
+runtime.config.json
 .file-manifest
 .devcontainer/
 
